@@ -22,3 +22,7 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.box-header-boder {
+    border-top: 15px solid #3288e6 !important;
+}

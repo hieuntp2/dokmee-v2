@@ -1,0 +1,35 @@
+﻿
+@model string
+
+@{
+    string typeUpcase = Model.ToUpper();
+}
+
+@switch (typeUpcase)
+{
+    case "TXT":
+        <img src="~/Content/imgs/txt.png"  class="folder-item-icon"/>
+        break;
+    case "PDF":
+        <img src="~/Content/imgs/pdf.png"  class="folder-item-icon"/>
+        break;
+    case "DOCX":
+        <img src="~/Content/imgs/docx.png"  class="folder-item-icon"/>
+        break;
+    case "XLS":
+        <img src="~/Content/imgs/excel.png"  class="folder-item-icon"/>
+        break;
+
+    case "PNG":
+        <img src="~/Content/imgs/png.jpg"  class="folder-item-icon"/>
+        break;
+    case "JPG":
+        <img src="~/Content/imgs/jpg.png"  class="folder-item-icon"/>
+        break;
+    case "FOLDER":
+        <img src="~/Content/imgs/folder-icon.png"  class="folder-item-icon"/>
+        break;
+    default:
+        <img src="~/Content/imgs/file-icon.png"  class="folder-item-icon"/>
+        return;
+}

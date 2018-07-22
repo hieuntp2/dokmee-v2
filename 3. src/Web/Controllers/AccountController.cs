@@ -26,7 +26,7 @@ namespace Web.Controllers
         public IDokmeeService DokmeeService { get; set; }
 
         [Dependency]
-        public ITempDbService TempDbService { get; set; }
+        public ITempDbService TempDbServiceOj { get; set; }
 
         public AccountController()
         {
@@ -102,10 +102,18 @@ namespace Web.Controllers
                     HttpContext.GetOwinContext()
                       .Authentication.SignIn(new AuthenticationProperties { IsPersistent = false }, ident);
 
-                    TempDbService.SetUser(model.UserName, model.Password, model.Type);
+                    TempDbServiceOj.SetUser(model.UserName, model.Password, model.Type);
 
-                    return RedirectToAction("AfterMyActionResult", "Home",
-                        new { username = model.UserName, password = model.Password, loginType = model.Type }); // auth succeed 
+                    if (string.IsNullOrWhiteSpace(returnUrl))
+                    {
+                        return RedirectToAction("AfterMyActionResult", "Home",
+                            new { username = model.UserName, password = model.Password, loginType = model.Type }); // auth succeed 
+                    }
+                    else
+                    {
+                        return Redirect(returnUrl);
+                    }
+                   
                 }
 
               
@@ -125,6 +133,10 @@ namespace Web.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            // remove temp database account
+            var username = User.Identity.GetUserId();
+            TempDbServiceOj.RemoveUserLogin(username);
+
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }

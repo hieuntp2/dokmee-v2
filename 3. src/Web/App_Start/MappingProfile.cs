@@ -23,11 +23,13 @@ namespace Web.App_Start
             .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.CabinetID))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CabinetName));
 
-          cfg.CreateMap<DmsNode, Node>()
-              .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ID))
-              .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-              .ForMember(dest => dest.IsFolder, opt => opt.MapFrom(src => src.IsFolder));
-          
+        cfg.CreateMap<DmsNode, Node>()
+            .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ID))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.IsFolder, opt => opt.MapFrom(src => src.IsFolder))
+            .ForMember(dest => dest.IsRoot, opt => opt.MapFrom(src => src.IsRoot))
+          .ForMember(dest => dest.FileType, opt => opt.MapFrom(src => src.FileType));
+
       });
 
       return config;

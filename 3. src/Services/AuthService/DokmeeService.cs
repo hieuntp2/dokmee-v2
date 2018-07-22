@@ -11,6 +11,10 @@ using Dokmee.Dms.Connector.Advanced.Extension;
 using Repositories;
 using Services.SessionHelperService;
 using Services.TempDbService;
+using Dokmee.Dms.Advanced.WebAccess.Data;
+using System.Reflection;
+using System.Diagnostics;
+using Services.UserSerivce;
 
 namespace Services.AuthService
 {
@@ -20,11 +24,32 @@ namespace Services.AuthService
         private DmsConnector _dmsConnector;
         private ConnectorModel _connectorModel;
         private ITempDbService _tempDbService;
+        private IUserService _userService;
 
-        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService)
+        public DmsConnector DmsConnectorProperty
+        {
+            get
+            {
+                if (!_userService.IsAuthenticate())
+                {
+                    throw new Exception("User not authenticated");
+                }
+                if (_dmsConnector == null)
+                {
+                    var username = _userService.GetUserId();
+                    var tempLogin = _tempDbService.GetUserLogin(username);
+                    CreateConnector(tempLogin.Username, tempLogin.Password, (ConnectorType)tempLogin.Type);
+                }
+                return _dmsConnector;
+            }
+            set { _dmsConnector = value; }
+        }
+
+        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
         {
             _sessionHelperService = sessionHelperService;
             _tempDbService = tempDbService;
+            _userService = userService;
         }
 
         private ConnectorModel ConnectorVm
@@ -39,7 +64,7 @@ namespace Services.AuthService
                 return _connectorModel;
             }
         }
-        
+
         public Task<SignInResult> Login(string username, string password, ConnectorType type)
         {
             DokUser user = new DokUser();
@@ -87,16 +112,158 @@ namespace Services.AuthService
                 throw new ArgumentException("username is null or empty");
             }
 
-            UserLogin user = _tempDbService.GetUserLogin(username);
-            if (_dmsConnector == null)
-            {
-                CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            }
+            //UserLogin user = _tempDbService.GetUserLogin(username);
+            //if (_dmsConnector == null)
+            //{
+            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+            //}
 
-            _dmsConnector.RegisterCabinet(new Guid(cabinetId));
-            IEnumerable<DmsNode> dmsNodes = _dmsConnector.GetFsNodesByName();
+            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+            IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
             return dmsNodes;
         }
+
+        public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
+        {
+            //UserLogin user = _tempDbService.GetUserLogin(username);
+            //if (_dmsConnector == null)
+            //{
+            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+            //}
+            var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
+                : DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
+
+            return Task.FromResult(result);
+        }
+
+        public IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+            //UserLogin user = _tempDbService.GetUserLogin(username);
+
+            //if (_dmsConnector == null)
+            //{
+            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+            //}
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            Guid id = Guid.Empty;
+            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+            {
+                DmsConnectorProperty.RegisterCabinet(id);
+                if (isFolder)
+                {
+                    results = DmsConnectorProperty.Search(SearchFieldType.TextIndex, name, "Folder Title").DmsFilesystem;
+                }
+                else
+                {
+                    try
+                    {
+                        var nodes = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Document, name);
+                        if (nodes != null && nodes.Any())
+                        {
+                            var nodeId = nodes.First()?.ID.ToString();
+                            if (!string.IsNullOrEmpty(nodeId))
+                            {
+                                results = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return results;
+        }
+
+        public void UpdateIndex(string username, Dictionary<object, object> args)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+            UserLogin user = _tempDbService.GetUserLogin(username);
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            var cabinetId = args["CabinetId"].ToString();
+            Guid idTemp = Guid.Empty;
+            //if (_dmsConnector == null)
+            //{
+            //    if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out idTemp))
+            //    {
+            //        CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+            //        _dmsConnector.RegisterCabinet(idTemp);
+            //    }
+            //}
+
+            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out idTemp))
+            {
+                DmsConnectorProperty.RegisterCabinet(idTemp);
+            }
+            
+            var status = args["CustomerStatus"].ToString().Split(';');
+            if (status.Length > 0)
+            {
+                foreach (var item in status)
+                {
+                    var info = item.Split(':');
+                    if (info.Length == 2)
+                    {
+                        var nodeId = info[0].Trim();
+                        var customerStatus = info[1].Trim();
+                        Guid id = Guid.Empty;
+                        if (!string.IsNullOrEmpty(nodeId) && Guid.TryParse(nodeId, out id))
+                        {
+                            var fileSystems = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
+                            if (fileSystems != null && fileSystems.Any())
+                            {
+                                var file = fileSystems.First();
+                                var dokmeeIndexInfos = file.IndexFieldPairCollection;
+                                if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
+                                {
+                                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
+                                    if (statusIndex != null)
+                                    {
+                                        statusIndex.IndexValue = customerStatus;
+                                        IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
+                                        {
+                                            DokmeeIndexID = x.IndexFieldGuid,
+                                            Name = x.IndexName,
+                                            Value = x.IndexValue,
+                                            SortOrder = x.SortOrder,
+                                            CabinetID = idTemp
+                                        });
+                                        DmsConnectorProperty.UpdateIndex(id, dokmeeIndexes);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        public void Preview(string username, string id, string cabinetId)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+            //UserLogin user = _tempDbService.GetUserLogin(username);
+            //if (_dmsConnector == null)
+            //{
+            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+            //    _dmsConnector.RegisterCabinet(new Guid(cabinetId));
+            //}
+
+            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+            var config = Assembly.GetExecutingAssembly().Location;
+            Process.Start(DmsConnectorProperty.ViewFile(id), config);
+        }
+
+        #region private methods
 
         private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
         {
@@ -150,6 +317,8 @@ namespace Services.AuthService
 
             return loginResult;
         }
+
+        #endregion
     }
 
     public class InvalideUsernameException : ArgumentException

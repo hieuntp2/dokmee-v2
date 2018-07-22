@@ -54,7 +54,7 @@
     </Reference>
     <Reference Include="Dokmee.Dms.Connector.Advanced, Version=1.6.3.0, Culture=neutral, PublicKeyToken=07b394aec6292471, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dokmee.Dms.Connector.Advanced.dll</HintPath>
+      <HintPath>..\..\2. libs\Dokmee.Dms.Connector.Advanced.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -262,6 +262,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\Home\DetailModel.cs" />
     <Compile Include="ViewModels\Home\IndexModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +270,143 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\imgs\complete.png" />
+    <Content Include="Content\imgs\doc.jpg" />
+    <Content Include="Content\imgs\docx.png" />
+    <Content Include="Content\imgs\dok-logo.png" />
+    <Content Include="Content\imgs\dokmee-logo.jpg" />
+    <Content Include="Content\imgs\excel.png" />
+    <Content Include="Content\imgs\file-icon.png" />
+    <Content Include="Content\imgs\folder-icon.png" />
+    <Content Include="Content\imgs\jpg.png" />
+    <Content Include="Content\imgs\loading.gif" />
+    <Content Include="Content\imgs\logo-idea.png" />
+    <Content Include="Content\imgs\mini-logo.ico" />
+    <Content Include="Content\imgs\pdf.png" />
+    <Content Include="Content\imgs\png.jpg" />
+    <Content Include="Content\imgs\txt.png" />
+    <Content Include="Content\imgs\update-icon.png" />
+    <Content Include="Content\plugins\iCheck\icheck.js" />
+    <Content Include="Content\plugins\iCheck\icheck.min.js" />
+    <Content Include="Content\plugins\iCheck\skins\all.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\aero%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\aero.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\aero.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\blue%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\blue.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\blue.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\flat%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\flat.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\flat.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\green%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\green.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\green.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\grey%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\grey.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\grey.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\orange%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\orange.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\orange.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\pink%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\pink.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\pink.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\purple%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\purple.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\purple.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\red%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\red.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\red.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\yellow%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\yellow.css" />
+    <Content Include="Content\plugins\iCheck\skins\flat\yellow.png" />
+    <Content Include="Content\plugins\iCheck\skins\flat\_all.css" />
+    <Content Include="Content\plugins\iCheck\skins\futurico\futurico%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\futurico\futurico.css" />
+    <Content Include="Content\plugins\iCheck\skins\futurico\futurico.png" />
+    <Content Include="Content\plugins\iCheck\skins\line\aero.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\blue.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\green.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\grey.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\line%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\line\line.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\line.png" />
+    <Content Include="Content\plugins\iCheck\skins\line\orange.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\pink.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\purple.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\red.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\yellow.css" />
+    <Content Include="Content\plugins\iCheck\skins\line\_all.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\aero%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\aero.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\aero.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\blue%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\blue.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\blue.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\green%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\green.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\green.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\grey%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\grey.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\grey.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\minimal%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\minimal.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\minimal.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\orange%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\orange.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\orange.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\pink%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\pink.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\pink.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\purple%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\purple.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\purple.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\red%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\red.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\red.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\yellow%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\yellow.css" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\yellow.png" />
+    <Content Include="Content\plugins\iCheck\skins\minimal\_all.css" />
+    <Content Include="Content\plugins\iCheck\skins\polaris\polaris%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\polaris\polaris.css" />
+    <Content Include="Content\plugins\iCheck\skins\polaris\polaris.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\aero%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\aero.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\aero.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\blue%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\blue.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\blue.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\green%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\green.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\green.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\grey%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\grey.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\grey.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\orange%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\orange.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\orange.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\pink%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\pink.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\pink.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\purple%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\purple.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\purple.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\red%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\red.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\red.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\square%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\square.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\square.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\yellow%402x.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\yellow.css" />
+    <Content Include="Content\plugins\iCheck\skins\square\yellow.png" />
+    <Content Include="Content\plugins\iCheck\skins\square\_all.css" />
+    <Content Include="Content\styles\dokstyles.css">
+      <DependentUpon>dokstyles.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\styles\dokstyles.min.css">
+      <DependentUpon>dokstyles.css</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -278,7 +416,13 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\styles\dokstyles.scss" />
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\home\detail.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -318,6 +462,10 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\CabinetDetail.cshtml" />
+    <Content Include="Views\Home\Folder.cshtml" />
+    <Content Include="Views\Home\Details.cshtml" />
+    <Content Include="Views\Home\_itemIcon.cshtml" />
+    <Content Include="Views\Home\_loadingOverlay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

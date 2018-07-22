@@ -12,6 +12,8 @@ using System.Web;
 using AutoMapper;
 using Web.App_Start;
 using Services.TempDbService;
+using Services.UserSerivce;
+using System.Security.Principal;
 
 namespace Web
 {
@@ -57,6 +59,13 @@ namespace Web
             // container.RegisterType<IProductRepository, ProductRepository>();
             container.RegisterType<HttpSessionState>(
                 new InjectionFactory(c => { return HttpContext.Current.Session; }));
+            container.RegisterType<IPrincipal>(
+                new InjectionFactory(c => { return HttpContext.Current.User; }));
+
+            container.RegisterType<IUserService, UserService>();
+
+            container.RegisterType<IUserService, UserService>();
+
             container.RegisterType<IDokmeeService, DokmeeService>();
             container.RegisterType<ITempDbService, TempDbService>();
             container.RegisterType<ISessionHelperService, SessionHelperService>();

@@ -12,5 +12,6 @@ namespace Services.TempDbService
     {
         void SetUser(string username, string password, ConnectorType type);
         UserLogin GetUserLogin(string username);
+        void RemoveUserLogin(string username);
     }
 }

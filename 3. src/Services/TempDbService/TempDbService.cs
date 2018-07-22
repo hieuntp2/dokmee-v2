@@ -17,7 +17,8 @@ namespace Services.TempDbService
         public TempDbService()
         {
             _dbContext = new DokmeeTempEntities();
-        }
+
+		}
 
 
         public void SetUser(string username, string password, ConnectorType type)
@@ -49,6 +50,16 @@ namespace Services.TempDbService
         public UserLogin GetUserLogin(string username)
         {
             return _dbContext.UserLogins.SingleOrDefault(t => t.Username == username);
+        }
+
+        public void RemoveUserLogin(string username)
+        {
+            var userLogin = _dbContext.UserLogins.SingleOrDefault(t => t.Username == username);
+            if (userLogin != null)
+            {
+                _dbContext.UserLogins.Remove(userLogin);
+                _dbContext.SaveChanges();
+            }
         }
     }
 }

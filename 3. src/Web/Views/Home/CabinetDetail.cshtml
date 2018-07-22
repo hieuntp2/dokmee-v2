@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Services.AuthService.Models.Node>
 @{
     ViewBag.Title = "CabinetDetail";
+    var cabinetId = ViewBag.cabinetId;
 }
 
 <section>
@@ -10,37 +11,69 @@
             <a href="/home/index">Back to list cabinets</a>
             <table class="table">
                 <thead>
-                <tr>
-                    <th style="width: 30%;">ID</th>
-                    <th style="width: 50%;">Name</th>
-                    <th style="width: 20%;">Type</th>
-                </tr>
+                    <tr>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 60%;">Name</th>
+                        <th style="width: 20%;">Type</th>
+                    </tr>
                 </thead>
 
                 <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.ID</td>
-                        <td>
-                            <a>
-                                @item.Name
-                            </a>
-                        </td>
-                        <td>
-                            @if (item.IsFolder)
-                            {
-                                <span>Folder</span>
-                            }
-                            else
-                            {
-                                <span>File</span>
-                            }
-                        </td>
-                    </tr>
-                }
+                    @foreach (var item in Model)
+                    {
+                        string folder = item.IsFolder ? "folder" : "file";
+                        <tr name="@item.Name" type="@folder" id="@cabinetId">
+
+                            <td>
+                                @if (item.IsFolder)
+                                {
+                                    @Html.Partial("_itemIcon", "Folder")
+                                }
+                                else
+                                {
+                                    @Html.Partial("_itemIcon", "File")
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsFolder)
+                                {
+                                    <a href="/home/Details?cabinetId=@cabinetId&&dmstype=@folder&&name=@item.Name">
+                                        @item.Name
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a>
+                                        @item.Name
+                                    </a>
+                                }
+
+                            </td>
+                            <td>
+                                @if (item.IsFolder)
+                                {
+                                    <span>Folder</span>
+                                }
+                                else
+                                {
+                                    <span>File</span>
+                                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </section>
+@section scripts
+{
+    <script>
+        $('tr').dblclick(function () {
+            // var cabinetId = $(this).attr('id');
+            var typeview = $(this).attr('type');
+            window.location.href = "/home/Details?cabinetId=" + $(this).attr('id') + '&dmstype=' +
+                typeview + '&name=' + $(this).attr('name');
+        })
+    </script>
+}

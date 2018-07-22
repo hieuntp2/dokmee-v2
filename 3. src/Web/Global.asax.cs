@@ -6,6 +6,8 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.AspNet.Identity;
+using Services.TempDbService;
 
 namespace Web
 {
@@ -18,6 +20,19 @@ namespace Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        protected void Session_OnEnd(object sender, EventArgs e)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var username = User.Identity.GetUserId();
+                if (!string.IsNullOrWhiteSpace(username))
+                {
+                    ITempDbService dbService = new TempDbService();
+                    dbService.RemoveUserLogin(username);
+                }
+            }
         }
     }
 }
