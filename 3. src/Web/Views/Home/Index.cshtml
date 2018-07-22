@@ -1,0 +1,34 @@
+﻿@model Web.ViewModels.Home.IndexModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Cabinets</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">ID</th>
+                        <th style="width: 70%;">Name</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Cabinets)
+                    {
+                        <tr>
+                            <td>@item.ID</td>
+                            <td>
+                                <a href="/home/CabinetDetail?cabinetId=@item.ID">
+                                    @item.Name
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

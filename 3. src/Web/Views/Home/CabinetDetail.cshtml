@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Services.AuthService.Models.Node>
+@{
+    ViewBag.Title = "CabinetDetail";
+}
+
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Cabinet content</h4>
+            <a href="/home/index">Back to list cabinets</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 30%;">ID</th>
+                    <th style="width: 50%;">Name</th>
+                    <th style="width: 20%;">Type</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ID</td>
+                        <td>
+                            <a>
+                                @item.Name
+                            </a>
+                        </td>
+                        <td>
+                            @if (item.IsFolder)
+                            {
+                                <span>Folder</span>
+                            }
+                            else
+                            {
+                                <span>File</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
