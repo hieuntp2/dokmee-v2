@@ -264,6 +264,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\Home\DetailModel.cs" />
     <Compile Include="ViewModels\Home\IndexModel.cs" />
+    <Compile Include="ViewModels\Home\SearchModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -466,6 +467,7 @@
     <Content Include="Views\Home\Details.cshtml" />
     <Content Include="Views\Home\_itemIcon.cshtml" />
     <Content Include="Views\Home\_loadingOverlay.cshtml" />
+    <Content Include="Views\Home\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
