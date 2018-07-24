@@ -243,8 +243,6 @@ namespace Services.AuthService
             }
         }
 
-
-
         public void Preview(string username, string id, string cabinetId)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -263,9 +261,57 @@ namespace Services.AuthService
             Process.Start(DmsConnectorProperty.ViewFile(id), config);
         }
 
-        #region private methods
+		/// <summary>
+		/// Search File System by Index
+		/// </summary>
+		/// <param name="fieldName"></param>
+		/// <param name="searchValue"></param>
+		/// <param name="cabinetId"></param>
+		/// <returns></returns>
+		public IEnumerable<DokmeeFilesystem> Search(string username, string fieldName, string searchValue, string cabinetId, SearchFieldType indexFieldType)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
 
-        private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
+			IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+			Guid id = Guid.Empty;
+			if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+			{
+				DmsConnectorProperty.RegisterCabinet(id);
+				var lookupResults = DmsConnectorProperty.Search(indexFieldType, searchValue, fieldName);
+				results = lookupResults.DmsFilesystem;
+			}
+			return results;
+		}
+
+		/// <summary>
+		/// Get all Cabinet Indexes
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="cabinetId"></param>
+		/// <returns></returns>
+		public IEnumerable<DokmeeIndex> GetCabinetIndexes(string username, string cabinetId)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
+
+			IEnumerable<DokmeeIndex> results = new List<DokmeeIndex>();
+			Guid id = Guid.Empty;
+			if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+			{
+				DmsConnectorProperty.RegisterCabinet(id);
+				results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);
+			}
+			return results;
+		}
+
+		#region private methods
+
+		private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
         {
             username = username ?? _sessionHelperService.Username;
             if (string.IsNullOrWhiteSpace(username))
