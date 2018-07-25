@@ -1,4 +1,6 @@
-﻿@model Web.ViewModels.Home.SearchModel
+﻿@using System.Activities.Statements
+@using Dokmee.Dms.Advanced.WebAccess.Data
+@model Web.ViewModels.Home.SearchModel
 @{
     ViewBag.Title = "Search";
 }
@@ -9,27 +11,70 @@
         <div class="my-box box-header-boder">
             <div class="box-header">
                 <h3>Search</h3>
-                @foreach (var item in Model.TableTitles)
-                {
+
+                <form action="Search" method="post">
+                    @Html.HiddenFor(model => model.CabinetId)
+
+
                     <div class="row">
+
                         <div class="form-group">
-                            <div class="col-md-6">
-                                <label class="pull-right">@item.Title</label>
+                            <div class="col-md-3">
+                                <label class="pull-right">Index</label>
                             </div>
-                            <div class="col-md-6">
-                                <input type="text" name="@item.Title" class="form-control"/>
+                            <div class="col-md-3">
+                                <select class="form-control" id="search-select-index">
+                                    @foreach (var index in Model.TableTitles)
+                                    {
+                                        <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
+                                            @index.Title
+                                        </option>
+                                    }
+                                </select>
                             </div>
+                            <div class="col-md-3">
+                                @foreach (var index in Model.TableTitles)
+                                {
+                                    switch (index.Type)
+                                    {
+                                        case IndexValueType.Integer:
+                                        case IndexValueType.Float:
+                                            <input type="number" class="form-control" name="index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                            break;
+
+                                        case IndexValueType.DateTime:
+                                            <input type="date" class="form-control" name="index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                            break;
+
+                                        default:
+                                            <input type="text" class="form-control" name="index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                            break;
+                                    }
+
+                                }
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-default pull-left">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
+                            </div>
+                            <br />
                         </div>
-                        <br/>
                     </div>
-                }
+                </form>
 
             </div>
             <hr />
             <div class="box-body">
-                <table class="table" id="tblfileSystems">
-
-                </table>
+                <table class="table" id="tblfileSystems"></table>
                 @*<table class="table" id="tblfileSystems">
                         <thead>
                             <tr>
@@ -57,16 +102,19 @@
                         </thead>
                         <tbody>
                             @if (results != null && results.Any())
-                            {
-                                var item = 1;
-                                foreach (var file in results)
                                 {
+                                    var item = 1;
+                                    foreach (var file in results)
+                                    {
                                     <tr nodeId="@file.FsGuid" id="@cabinetId">
                                         <td>
-                                            @*<label>
-                                                    <input type="checkbox" name="item" id="item">
-                                                </label>
-                                            <div class="icheckbox">
+                                                @*<label>
+
+                                                        <input type="checkbox" name="item" id="item">
+
+                                                    </label>
+
+                                                <div class="icheckbox">
                                                 <input type="checkbox" id="checkbox" class="select-doc-item">
                                             </div>
                                         </td>
@@ -76,11 +124,11 @@
                                         @for (int i = 0; i < indexPairCount; i++)
                                         {
                                             var data = file.IndexFieldPairCollection[i].IndexValue?.Trim();
-                                            var newSelected = "";
-                                            var updatedSelected = "";
-                                            var completeSelected = "";
+                                var newSelected = "";
+                                var updatedSelected = "";
+                                var completeSelected = "";
 
-                                            var header = results.First().IndexFieldPairCollection[i].IndexName;
+                                var header = results.First().IndexFieldPairCollection[i].IndexName;
                                             if (header.ToUpper() == "DOCUMENT STATUS")
                                             {
                                                 if (string.IsNullOrEmpty(data))
@@ -130,7 +178,7 @@
 }
 @section scripts
 {
-
+    <script src="~/Scripts/home/search.js"></script>
 }
 
 

@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using DokCapture.ServicenNetFramework.Auth;
+using Dokmee.Dms.Advanced.WebAccess.Data;
 using Dokmee.Dms.Connector.Advanced.Core.Data;
 using Microsoft.AspNet.Identity;
 using Services.AuthService;
@@ -120,25 +121,124 @@ namespace Web.Controllers
       return Json(new { });
     }
 
-    public ActionResult Search(string key)
+    [HttpGet]
+    public ActionResult Search(string cabinetId)
     {
-      SearchModel model = new SearchModel();
-      model.Key = key;
+      string username = _userService.GetUserId();
+      //  var dokIndexs = _dokmeeService.GetCabinetIndexes(username, cabinetId);
+
+      SearchModel model = new SearchModel()
+      {
+        CabinetId = cabinetId
+      };
+
+      model.TableTitles.Add(new DocumentIndex()
+      {
+        Id = "0",
+        Order = 1,
+        Title = "Customer ID",
+        Type = IndexValueType.Integer
+      });
+      model.TableTitles.Add(new DocumentIndex()
+      {
+        Id = "1",
+        Order = 2,
+        Title = "Customer Name",
+        Type = IndexValueType.String
+      });
+      model.TableTitles.Add(new DocumentIndex()
+      {
+        Id = "2",
+        Order = 3,
+        Title = "SIGN UP",
+        Type = IndexValueType.DateTime
+      });
+
+
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "aa1",
+        Title = "Forder 1",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = true,
+        IsRoot = true,
+        Type = "folder"
+      });
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "aa2",
+        Title = "Forder 2",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = true,
+        IsRoot = true,
+        Type = "folder"
+      });
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "aa3",
+        Title = "Forder 3",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = true,
+        IsRoot = true,
+        Type = "folder"
+      });
+
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "bb1",
+        Title = "file 1",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = false,
+        IsRoot = false,
+        Type = "pdf"
+      });
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "bb1",
+        Title = "file 2",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = false,
+        IsRoot = false,
+        Type = "pdf"
+      });
+      model.DocumentItems.Add(new DocumentItem()
+      {
+        Id = "bb3",
+        Title = "file 3",
+        Indexs = new List<DocumentIndex>(),
+        IsFolder = false,
+        IsRoot = false,
+        Type = "png"
+      });
+      return View(model);
+    }
+
+    [HttpPost]
+    public ActionResult Search(SearchModel model)
+    {
+      string username = _userService.GetUserId();
+
+      //  var dokIndexs = _dokmeeService.GetCabinetIndexes(username, cabinetId);
+
+     
 
       model.TableTitles.Add(new DocumentIndex()
       {
         Order = 1,
-        Title = "Customer ID"
+        Title = "Customer ID",
+        Type = IndexValueType.Integer
       });
       model.TableTitles.Add(new DocumentIndex()
       {
         Order = 2,
-        Title = "Customer Name"
+        Title = "Customer Name",
+        Type = IndexValueType.String
       });
       model.TableTitles.Add(new DocumentIndex()
       {
         Order = 3,
-        Title = "SIGN UP"
+        Title = "SIGN UP",
+        Type = IndexValueType.DateTime
       });
 
 

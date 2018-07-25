@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Dokmee.Dms.Advanced.WebAccess.Data;
 
 namespace Web.ViewModels.Home
 {
@@ -11,14 +12,7 @@ namespace Web.ViewModels.Home
     public List<DocumentIndex> TableTitles { get; set; } = new List<DocumentIndex>();
 
     public List<DocumentItem> DocumentItems { get; set; } = new List<DocumentItem>();
-  }
-
-  public enum IndexType
-  {
-    String,
-    Integer,
-    Decimal,
-    Date
+    public string CabinetId { get; set; }
   }
 
   public class DocumentIndex
@@ -26,9 +20,9 @@ namespace Web.ViewModels.Home
     public string Id { get; set; } = "0";
     public string Title { get; set; } = string.Empty;
     public int Order { get; set; } = 0;
-    public string SearchKey { get; set; }
+    public object Value { get; set; }
 
-    public IndexType Type { get; set; } = IndexType.String;
+    public IndexValueType Type { get; set; } = IndexValueType.String;
   }
 
   public class DocumentItem

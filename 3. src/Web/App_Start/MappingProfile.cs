@@ -6,6 +6,7 @@ using System.Web;
 using AutoMapper;
 using Dokmee.Dms.Connector.Advanced.Core.Data;
 using Services.AuthService.Models;
+using Web.ViewModels.Home;
 
 namespace Web.App_Start
 {
@@ -30,6 +31,11 @@ namespace Web.App_Start
             .ForMember(dest => dest.IsRoot, opt => opt.MapFrom(src => src.IsRoot))
           .ForMember(dest => dest.FileType, opt => opt.MapFrom(src => src.FileType));
 
+        cfg.CreateMap<DokmeeIndex, DocumentIndex>()
+          .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DokmeeIndexID.ToString()))
+          .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+          .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.SortOrder))
+          .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ValueType));
       });
 
       return config;
