@@ -16,8 +16,13 @@ $(document).ready(function () {
 function onSearchSelectIndexChange(id) {
 
   // disable current show input
-  $("input[name=index-select-input]").hide();
+  //$("input[name=index-select-input]").hide();
+    $(".index-select-input").hide();
 
   // show new index input
   $("#search-index-" + id).show();
+}
+
+function onAddSearchConditionClick() {
+
 }

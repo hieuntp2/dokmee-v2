@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\1. My Project\1. Dokmee\1.1 Dokmee-git\3. src\Repositories\DokmeeTempDbModel.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\1. My Project\1. Dokmee\4. dokmee-v2-git\3. src\Repositories\DokmeeTempDbModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

@@ -23,7 +23,7 @@
                                 <label class="pull-right">Index</label>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-control" id="search-select-index">
+                                <select class="form-control" id="search-select-index" @*name="TableTitles[0].Value*@ ">
                                     @foreach (var index in Model.TableTitles)
                                     {
                                         <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
@@ -35,29 +35,37 @@
                             <div class="col-md-3">
                                 @foreach (var index in Model.TableTitles)
                                 {
+                                    int i = Model.TableTitles.IndexOf(index);
+                                    <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
+                                    <input type="hidden" name="TableTitles[@i].Title" value="@index.Title" />
+                                    <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
+                                    <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
                                     switch (index.Type)
                                     {
                                         case IndexValueType.Integer:
                                         case IndexValueType.Float:
-                                            <input type="number" class="form-control" name="index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                            <input type="number" class="form-control index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
+                                                   name="TableTitles[@i].Value" />
                                             break;
 
                                         case IndexValueType.DateTime:
-                                            <input type="date" class="form-control" name="index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                            <input type="date" class="form-control index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
+                                                   name="TableTitles[@i].Value" />
                                             break;
 
-                                        default:
-                                            <input type="text" class="form-control" name="index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title" />
+                                        case IndexValueType.String:
+                                            <input type="text" class="form-control index-select-input" style="display: none;"
+                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
+                                                   name="TableTitles[@i].Value" />
                                             break;
                                     }
 
                                 }
                             </div>
                             <div class="col-md-1">
-                                <button class="btn btn-default pull-left">
+                                <button class="btn btn-default pull-left" onclick="onAddSearchConditionClick()">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
@@ -74,97 +82,59 @@
             </div>
             <hr />
             <div class="box-body">
-                <table class="table" id="tblfileSystems"></table>
-                @*<table class="table" id="tblfileSystems">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="checkbox" name="all" id="checkbox-all">
-                                </th>
-                                <th>EXT</th>
-                                @if (indexPairCount > 0)
-                                {
-                                    for (int i = 0; i < indexPairCount; i++)
-                                    {
-                                        var header = results.First().IndexFieldPairCollection[i].IndexName;
-                                        <th>@header</th>
-                                    }
-                                }
-                                else
-                                {
-                                    <th>Document Title</th>
-                                    <th>Customer Name</th>
-                                    <th>Customer #</th>
-                                    <th>Sign Up Date</th>
-                                    <th>Document Status</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (results != null && results.Any())
-                                {
-                                    var item = 1;
-                                    foreach (var file in results)
-                                    {
-                                    <tr nodeId="@file.FsGuid" id="@cabinetId">
-                                        <td>
-                                                @*<label>
+                <table class="table" id="tblfileSystems">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" name="all" id="checkbox-all">
+                            </th>
+                            <th>EXT</th>
+                            <th>Title</th>
 
-                                                        <input type="checkbox" name="item" id="item">
-
-                                                    </label>
-
-                                                <div class="icheckbox">
-                                                <input type="checkbox" id="checkbox" class="select-doc-item">
-                                            </div>
-                                        </td>
-                                        <td onclick="preview('@cabinetId','@file.FsGuid')">
-                                            @Html.Partial("_itemIcon", file.FileType)
-                                        </td>
-                                        @for (int i = 0; i < indexPairCount; i++)
-                                        {
-                                            var data = file.IndexFieldPairCollection[i].IndexValue?.Trim();
-                                var newSelected = "";
-                                var updatedSelected = "";
-                                var completeSelected = "";
-
-                                var header = results.First().IndexFieldPairCollection[i].IndexName;
-                                            if (header.ToUpper() == "DOCUMENT STATUS")
-                                            {
-                                                if (string.IsNullOrEmpty(data))
-                                                {
-                                                    data = "New";
-                                                }
-                                                switch (data)
-                                                {
-                                                    case "New": newSelected = "selected"; break;
-                                                    case "Updated": updatedSelected = "selected"; break;
-                                                    case "Complete": completeSelected = "selected"; break;
-                                                }
-                                                <td>
-                                                    <select class="form-control" style="margin: auto;" id="status" value="@data">
-                                                        <option @newSelected>
-                                                            New
-                                                        </option>
-                                                        <option @updatedSelected>
-                                                            Updated
-                                                        </option>
-                                                        <option @completeSelected>
-                                                            Complete
-                                                        </option>
-                                                    </select>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>@data</td>
-                                            }
-                                        }
-                                    </tr>
-                                }
+                            @foreach (var head in Model.TableTitles)
+                            {
+                                <th>@head.Title</th>
                             }
-                        </tbody>
-                    </table>*@
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.DocumentItems.Any())
+                        {
+                            foreach (var doc in Model.DocumentItems)
+                            {
+                                <tr nodeId="@doc.Id">
+                                    <td>
+                                        <div class="icheckbox">
+                                            <input type="checkbox" id="checkbox" class="select-doc-item">
+                                        </div>
+                                    </td>
+                                    <td onclick="preview('@Model.CabinetId','@doc.Id')">
+                                        @Html.Partial("_itemIcon", doc.Type)
+                                    </td>
+
+                                    @if (doc.Indexs.Any())
+                                    {
+                                        foreach (var index in doc.Indexs)
+                                        {
+                                            <td>@index.Value</td>
+                                        }
+                                    }
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="@(2+Model.DocumentItems.Count)">
+                                    <strong>No document found!</strong>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
             </div>
             <div class="box-footer">
 

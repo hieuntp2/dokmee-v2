@@ -61,5 +61,15 @@ namespace Services.TempDbService
                 _dbContext.SaveChanges();
             }
         }
+
+        public void UpdateCabinet(string username, string cabinetId)
+        {
+            UserLogin userLogin = GetUserLogin(username);
+            if (userLogin != null)
+            {
+                userLogin.CurrentCabinetId = cabinetId;
+                _dbContext.SaveChanges();
+            }
+        }
     }
 }

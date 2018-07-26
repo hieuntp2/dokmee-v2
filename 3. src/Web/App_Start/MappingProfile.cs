@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using AutoMapper;
+using Dms.Contracts;
 using Dokmee.Dms.Connector.Advanced.Core.Data;
 using Services.AuthService.Models;
 using Web.ViewModels.Home;
@@ -36,6 +37,24 @@ namespace Web.App_Start
           .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
           .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.SortOrder))
           .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ValueType));
+
+
+          cfg.CreateMap<NodeIndexInfo, DocumentIndex>()
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IndexFieldGuid.ToString()))
+              .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.IndexName))
+              .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.SortOrder))
+              .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.IndexValueType))
+              .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.IndexValue));
+
+          cfg.CreateMap<DokmeeFilesystem, DocumentItem>()
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.FsGuid.ToString()))
+              .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.FsName))
+              .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.FileType))
+              .ForMember(dest => dest.IsFolder, opt => opt.MapFrom(src => !src.IsDocument))
+              .ForMember(dest => dest.DisplayFileSize, opt => opt.MapFrom(src => src.DisplayFileSize))
+              .ForMember(dest => dest.FullPath, opt => opt.MapFrom(src => src.FullPath))
+              .ForMember(dest => dest.ParentFsGuid, opt => opt.MapFrom(src => src.ParentFsGuid.ToString()))
+              .ForMember(dest => dest.Indexs, opt => opt.MapFrom(src => src.IndexFieldPairCollection));
       });
 
       return config;

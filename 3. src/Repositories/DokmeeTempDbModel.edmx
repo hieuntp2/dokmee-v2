@@ -17,6 +17,7 @@
           <Property Name="SessionId" Type="nvarchar" MaxLength="50" />
           <Property Name="Guid" Type="nvarchar" MaxLength="20" />
           <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="CurrentCabinetId" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityContainer Name="DokmeeTempModelStoreContainer">
           <EntitySet Name="UserLogin" EntityType="Self.UserLogin" Schema="dbo" store:Type="Tables" />
@@ -40,6 +41,7 @@
           <Property Name="SessionId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Guid" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="CurrentCabinetId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -50,6 +52,7 @@
           <EntitySetMapping Name="UserLogins">
             <EntityTypeMapping TypeName="DokmeeTempModel.UserLogin">
               <MappingFragment StoreEntitySet="UserLogin">
+                <ScalarProperty Name="CurrentCabinetId" ColumnName="CurrentCabinetId" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="Guid" ColumnName="Guid" />
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />

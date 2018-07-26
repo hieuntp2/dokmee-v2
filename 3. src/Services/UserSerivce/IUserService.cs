@@ -11,5 +11,7 @@ namespace Services.UserSerivce
         bool IsAuthenticate();
 
         string GetUserId();
+        void UpdateCabinet(string cabinetId);
+        string GetCurrentCabinetId();
     }
 }
