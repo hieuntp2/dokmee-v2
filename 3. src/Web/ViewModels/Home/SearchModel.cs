@@ -6,107 +6,109 @@ using Dokmee.Dms.Advanced.WebAccess.Data;
 
 namespace Web.ViewModels.Home
 {
-  public class SearchModel
-  {
-    public string Key { get; set; }
-    public List<DocumentIndex> TableTitles { get; set; } = new List<DocumentIndex>();
-
-    public List<DocumentItem> DocumentItems { get; set; } = new List<DocumentItem>();
-    public string CabinetId { get; set; }
-  }
-
-  public class DocumentIndex
-  {
-    public string Id { get; set; } = "0";
-    public string Title { get; set; } = string.Empty;
-    public int Order { get; set; } = 0;
-
-
-    private object _value = null;
-    public object Value
+    public class SearchModel
     {
-      get => _value;
-      set
-      {
-        _value = value;
+        public string Key { get; set; }
+        public List<DocumentIndex> TableTitles { get; set; } = new List<DocumentIndex>();
 
-        ValueString = convertToStringValue(_value, _type);
-      }
+        public List<DocumentItem> DocumentItems { get; set; } = new List<DocumentItem>();
+        public string CabinetId { get; set; }
     }
 
-    private IndexValueType _type = IndexValueType.String;
-    public IndexValueType Type
+    public class DocumentIndex
     {
-      get => _type;
-      set
-      {
-        _type = value;
-        ValueString = convertToStringValue(_value, _type);
-      }
-    }
-
-    public string ValueString { get; set; }
+        public string Id { get; set; } = "0";
+        public string Title { get; set; } = string.Empty;
+        public int Order { get; set; } = 0;
 
 
-
-    private string convertToStringValue(object input, IndexValueType type)
-    {
-      if (input != null)
-      {
-        switch (type)
+        private object _value = null;
+        public object Value
         {
-          case IndexValueType.String:
-            // return ((String[])input)[0];
-            String[] checkConvert = input as String[];
-            if (checkConvert == null)
+            get => _value;
+            set
             {
-              return (string)input;
-            }
-            else
-            {
-              return checkConvert[0];
-            }
-          case IndexValueType.DateTime:
-            string getConvert = string.Empty;
-            String[] checkConvertdate = input as String[];
-            if (checkConvertdate == null)
-            {
-              getConvert = (string)input;
-            }
-            else
-            {
-              getConvert = checkConvertdate[0];
-            }
+                _value = value;
 
-            if (!string.IsNullOrWhiteSpace(getConvert))
-            {
-              return getConvert.ToString();
+                ValueString = convertToStringValue(_value, _type);
             }
-
-            return string.Empty;
-
-          case IndexValueType.Float:
-          case IndexValueType.Integer:
-            return input.ToString();
         }
 
-      }
-      return string.Empty;
+        private IndexValueType _type = IndexValueType.String;
+        public IndexValueType Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                ValueString = convertToStringValue(_value, _type);
+            }
+        }
+
+        public string ValueString { get; set; }
+
+
+
+        private string convertToStringValue(object input, IndexValueType type)
+        {
+            if (input != null)
+            {
+                switch (type)
+                {
+                    case IndexValueType.String:
+                        // return ((String[])input)[0];
+                        String[] checkConvert = input as String[];
+                        if (checkConvert == null)
+                        {
+                            return (string)input;
+                        }
+                        else
+                        {
+                            return checkConvert[0];
+                        }
+                    case IndexValueType.DateTime:
+                        string getConvert = string.Empty;
+                        String[] checkConvertdate = input as String[];
+                        if (checkConvertdate == null)
+                        {
+                            getConvert = (string)input;
+                        }
+                        else
+                        {
+                            getConvert = checkConvertdate[0];
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(getConvert))
+                        {
+                            return getConvert.ToString();
+                        }
+
+                        return string.Empty;
+
+                    case IndexValueType.Float:
+                    case IndexValueType.Integer:
+                        return input.ToString();
+                }
+
+            }
+            return string.Empty;
+        }
+
     }
 
-  }
+    public class DocumentItem
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Type { get; set; }
+        public bool IsFolder { get; set; } = false;
+        public bool IsRoot { get; set; } = false;
 
-  public class DocumentItem
-  {
-    public string Id { get; set; }
-    public string Title { get; set; }
-    public string Type { get; set; }
-    public bool IsFolder { get; set; } = false;
-    public bool IsRoot { get; set; } = false;
-
-    public List<DocumentIndex> Indexs { get; set; } = new List<DocumentIndex>();
-    public string DisplayFileSize { get; set; }
-    public string FullPath { get; set; }
-    public string ParentFsGuid { get; set; }
-  }
+        public List<DocumentIndex> Indexs { get; set; } = new List<DocumentIndex>();
+        public string DisplayFileSize { get; set; }
+        public string FullPath { get; set; }
+        public string ParentFsGuid { get; set; }
+        public bool IsInRecycleBin { get; internal set; }
+        public bool IsRecycleBin { get; internal set; }
+    }
 }

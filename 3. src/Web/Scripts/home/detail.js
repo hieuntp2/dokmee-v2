@@ -20,7 +20,7 @@ function Check_Changed(element) {
 }
 
 function UpdateIndex() {
-    $(".loading-overlay").show();
+
     var data = "";
     var id = "";
     $('#tblfileSystems > tbody  > tr').each(function () {
@@ -40,6 +40,7 @@ function UpdateIndex() {
         CabinetId: id
     };
     if (data != "") {
+        $(".loading-overlay").show();
         $.ajax({
             url: '/home/UpdateStatus',
             type: 'post',

@@ -54,7 +54,9 @@ namespace Web.App_Start
               .ForMember(dest => dest.DisplayFileSize, opt => opt.MapFrom(src => src.DisplayFileSize))
               .ForMember(dest => dest.FullPath, opt => opt.MapFrom(src => src.FullPath))
               .ForMember(dest => dest.ParentFsGuid, opt => opt.MapFrom(src => src.ParentFsGuid.ToString()))
-              .ForMember(dest => dest.Indexs, opt => opt.MapFrom(src => src.IndexFieldPairCollection));
+              .ForMember(dest => dest.Indexs, opt => opt.MapFrom(src => src.IndexFieldPairCollection))
+              .ForMember(dest => dest.IsInRecycleBin, opt => opt.MapFrom(src => src.IsInRecycleBin))
+              .ForMember(dest => dest.IsRecycleBin, opt => opt.MapFrom(src => src.IsRecycleBin));
       });
 
       return config;

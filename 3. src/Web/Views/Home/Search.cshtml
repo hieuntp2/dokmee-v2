@@ -6,6 +6,7 @@
 }
 
 @Html.Partial("_loadingOverlay")
+<input type="hidden" id="cabinet-id" value="@Model.CabinetId" />
 <section>
     <div class="col-md-12">
         <div class="my-box box-header-boder">
@@ -43,20 +44,15 @@
                                     if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                     {
                                         string value = index.ValueString;
-                                        ;
-                                        if (string.IsNullOrEmpty((value)))
-                                        {
-                                            value = "New";
-                                        }
                                         <select class="form-control index-select-input" style="margin: auto;"
                                                 id="search-index-@index.Id">
-                                            <option @(value.ToUpper().Equals("New") ? "selected" : "")>
+                                            <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
                                                 New
                                             </option>
-                                            <option @(value.ToUpper().Equals("Updated") ? "selected" : "")>
+                                            <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
                                                 Updated
                                             </option>
-                                            <option @(value.ToUpper().Equals("Complete") ? "selected" : "")>
+                                            <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
                                                 Complete
                                             </option>
                                         </select>
@@ -68,20 +64,17 @@
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
                                                 <input type="number" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title" />
                                                 break;
 
                                             case IndexValueType.DateTime:
                                                 <input type="date" class="form-control index-select-input" style="display: none;"
-                                                        id="search-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title" />
                                                 break;
 
                                             case IndexValueType.String:
                                                 <input type="text" class="form-control index-select-input" style="display: none;"
-                                                        id="search-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title" />
                                                 break;
                                         }
                                     }
@@ -122,20 +115,21 @@
                                     @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                     {
                                         string value = index.ValueString;
-                                        if (string.IsNullOrEmpty((value)))
-                                        {
-                                            value = "New";
-                                        }
                                         <select class="form-control" style="margin: auto;"
                                                 name="TableTitles[@i].Value" id="search-input-index-@index.Id"
                                                 value="@value">
-                                            <option @(value.ToUpper().Equals("New") ? "selected" : "")>
+                                            @if (string.IsNullOrWhiteSpace(value))
+                                            {
+                                                <option selected value=""></option>
+                                            }
+
+                                            <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
                                                 New
                                             </option>
-                                            <option @(value.ToUpper().Equals("Updated") ? "selected" : "")>
+                                            <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
                                                 Updated
                                             </option>
-                                            <option @(value.ToUpper().Equals("Complete") ? "selected" : "")>
+                                            <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
                                                 Complete
                                             </option>
                                         </select>
@@ -183,6 +177,16 @@
 
             </div>
             <hr />
+
+
+            <div class="row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary pull-right" type="button" onclick="UpdateStatusSearchIndex()">Update</button>
+                </div>
+            </div>
+            <hr />
             <div class="box-body">
                 <table class="table" id="tblfileSystems">
                     <thead>
@@ -191,7 +195,6 @@
                                 <input type="checkbox" name="all" id="checkbox-all">
                             </th>
                             <th>EXT</th>
-                            <th>Title</th>
 
                             @foreach (var head in Model.TableTitles)
                             {
@@ -219,7 +222,34 @@
                                     {
                                         foreach (var index in doc.Indexs)
                                         {
-                                            <td>@index.Value</td>
+                                            if (index.Title.ToUpper() == "DOCUMENT STATUS")
+                                            {
+                                                if (string.IsNullOrEmpty(index.ValueString))
+                                                {
+                                                    index.ValueString = "New";
+                                                }
+                                                string value = index.ValueString;
+                                                <td>
+                                                    <select class="form-control" style="margin: auto;"
+                                                            id="status" value="@value">
+                                                        <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
+                                                            New
+                                                        </option>
+                                                        <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
+                                                            Updated
+                                                        </option>
+                                                        <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
+                                                            Complete
+                                                        </option>
+                                                    </select>
+                                                </td>
+
+                                            }
+                                            else
+                                            {
+                                                <td>@index.Value</td>
+                                            }
+
                                         }
                                     }
 

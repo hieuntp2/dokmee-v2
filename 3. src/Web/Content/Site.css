@@ -26,3 +26,16 @@ textarea {
 .box-header-boder {
     border-top: 15px solid #3288e6 !important;
 }
+
+.loading-overlay {
+    background-color: #81bdffb8;
+    width: 100%;
+    top: 30%;
+    position: fixed;
+    right: 0px;
+    margin: auto;
+    text-align: center;
+    min-height: 200px;
+    vertical-align: middle;
+    z-index: 999;
+}
