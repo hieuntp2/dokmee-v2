@@ -69,3 +69,49 @@ function preview(cabinetId, id) {
         }
     });
 }
+
+
+function Complete() {
+    var trIdx = [];
+    var data = "";
+    var id = "";
+    var idx = 1;
+    $('#tblfileSystems > tbody  > tr').each(function () {
+        var select = $(this).find('input[type="checkbox"]:checked');
+        if (select.is(":checked")) {
+            var nodeId = $(this).attr('nodeId');
+            if (data != "") {
+                data = data + ";";
+            }
+            data = data + nodeId;
+            trIdx.push(idx);
+        }
+        id = $(this).attr('id');
+        idx = idx + 1;
+    });
+    var args = {
+        NodeId: data,
+        CabinetId: id
+    };
+    if (data != "") {
+        $(".loading-overlay").show();
+        $.ajax({
+            url: '/home/Complete',
+            type: 'post',
+            data: '{"args":' + JSON.stringify(args) + '}',
+            contentType: "application/json; charset=utf-8",
+            success: function (rs) {
+                for (var i = trIdx.length - 1; i >= 0; i--) {
+                    var rowdelete = trIdx[i];
+                    console.log(rowdelete);
+                    document.getElementById('tblfileSystems').deleteRow(rowdelete);
+                }
+                $(".loading-overlay").hide();
+            },
+            error: function (rs) {
+                alert("Complete fail!");
+                $(".loading-overlay").hide();
+            }
+        });
+    }
+}

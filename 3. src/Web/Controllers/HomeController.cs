@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using AutoMapper;
+﻿using AutoMapper;
 using DokCapture.ServicenNetFramework.Auth;
 using Dokmee.Dms.Advanced.WebAccess.Data;
 using Dokmee.Dms.Connector.Advanced.Core.Data;
@@ -14,10 +7,17 @@ using Services.AuthService;
 using Services.AuthService.Models;
 using Services.SessionHelperService;
 using Services.UserSerivce;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 using Web.ViewModels.Home;
+
 namespace Web.Controllers
 {
-    [Authorize]
+	[Authorize]
     public class HomeController : Controller
     {
 
@@ -206,5 +206,18 @@ namespace Web.Controllers
 
             return View(model);
         }
-    }
+
+		[HttpPost]
+		public ActionResult Complete(Dictionary<object, object> args)
+		{
+			if (args != null && args.ContainsKey("NodeId"))
+			{
+				string cabinetId = _userService.GetCurrentCabinetId();
+				string username = User.Identity.GetUserId();
+				var tempFolder = ConfigurationManager.AppSettings["TempFolder"];
+				_dokmeeService.Complete(username, args, tempFolder, cabinetId);
+			}
+			return Json(new { });
+		}
+	}
 }
