@@ -305,6 +305,7 @@ namespace Services.AuthService
 			{
 				DmsConnectorProperty.RegisterCabinet(id);
 				results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);
+
 			}
 			return results;
 		}

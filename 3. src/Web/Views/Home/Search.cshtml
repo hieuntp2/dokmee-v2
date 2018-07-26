@@ -12,18 +12,17 @@
             <div class="box-header">
                 <h3>Search</h3>
 
-                <form action="Search" method="post">
+                <form action="Search" method="post" id="search-form">
                     @Html.HiddenFor(model => model.CabinetId)
 
-
+                    <!-- Start Select Index -->
                     <div class="row">
-
                         <div class="form-group">
                             <div class="col-md-3">
                                 <label class="pull-right">Index</label>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-control" id="search-select-index" @*name="TableTitles[0].Value*@ ">
+                                <select class="form-control" id="search-select-index">
                                     @foreach (var index in Model.TableTitles)
                                     {
                                         <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
@@ -36,36 +35,60 @@
                                 @foreach (var index in Model.TableTitles)
                                 {
                                     int i = Model.TableTitles.IndexOf(index);
-                                    <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
-                                    <input type="hidden" name="TableTitles[@i].Title" value="@index.Title" />
-                                    <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
-                                    <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
-                                    switch (index.Type)
+                                    <input type="hidden" value="@index.Id" />
+                                    <input type="hidden" value="@index.Title" />
+                                    <input type="hidden" value="@index.Order" />
+                                    <input type="hidden" value="@index.Type" />
+
+                                    if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                     {
-                                        case IndexValueType.Integer:
-                                        case IndexValueType.Float:
-                                            <input type="number" class="form-control index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
-                                                   name="TableTitles[@i].Value" />
-                                            break;
-
-                                        case IndexValueType.DateTime:
-                                            <input type="date" class="form-control index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
-                                                   name="TableTitles[@i].Value" />
-                                            break;
-
-                                        case IndexValueType.String:
-                                            <input type="text" class="form-control index-select-input" style="display: none;"
-                                                   value="@index.Value" id="search-index-@index.Id" placeholder="@index.Title"
-                                                   name="TableTitles[@i].Value" />
-                                            break;
+                                        string value = index.ValueString;
+                                        ;
+                                        if (string.IsNullOrEmpty((value)))
+                                        {
+                                            value = "New";
+                                        }
+                                        <select class="form-control index-select-input" style="margin: auto;"
+                                                id="search-index-@index.Id">
+                                            <option @(value.ToUpper().Equals("New") ? "selected" : "")>
+                                                New
+                                            </option>
+                                            <option @(value.ToUpper().Equals("Updated") ? "selected" : "")>
+                                                Updated
+                                            </option>
+                                            <option @(value.ToUpper().Equals("Complete") ? "selected" : "")>
+                                                Complete
+                                            </option>
+                                        </select>
                                     }
+                                    else
+                                    {
+                                        switch (index.Type)
+                                        {
+                                            case IndexValueType.Integer:
+                                            case IndexValueType.Float:
+                                                <input type="number" class="form-control index-select-input" style="display: none;"
+                                                       id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
 
+                                            case IndexValueType.DateTime:
+                                                <input type="date" class="form-control index-select-input" style="display: none;"
+                                                        id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
+
+                                            case IndexValueType.String:
+                                                <input type="text" class="form-control index-select-input" style="display: none;"
+                                                        id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
+                                        }
+                                    }
                                 }
                             </div>
                             <div class="col-md-1">
-                                <button class="btn btn-default pull-left" onclick="onAddSearchConditionClick()">
+                                <button class="btn btn-default pull-left" onclick="onAddSearchConditionClick()" type="button">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>
@@ -77,6 +100,85 @@
                             <br />
                         </div>
                     </div>
+                    <!-- End Select Index -->
+
+                    @foreach (var index in Model.TableTitles)
+                    {
+                        int i = Model.TableTitles.IndexOf(index);
+                        <div class="row" id="row-search-input-group-@index.Id" style='@(string.IsNullOrWhiteSpace(index.ValueString) ? "display: none;" : "")'>
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    <!--Nothing-->
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="pull-right">@index.Title</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
+                                    <input type="hidden" name="TableTitles[@i].Title" value="@index.Title" />
+                                    <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
+                                    <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
+
+                                    @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
+                                    {
+                                        string value = index.ValueString;
+                                        if (string.IsNullOrEmpty((value)))
+                                        {
+                                            value = "New";
+                                        }
+                                        <select class="form-control" style="margin: auto;"
+                                                name="TableTitles[@i].Value" id="search-input-index-@index.Id"
+                                                value="@value">
+                                            <option @(value.ToUpper().Equals("New") ? "selected" : "")>
+                                                New
+                                            </option>
+                                            <option @(value.ToUpper().Equals("Updated") ? "selected" : "")>
+                                                Updated
+                                            </option>
+                                            <option @(value.ToUpper().Equals("Complete") ? "selected" : "")>
+                                                Complete
+                                            </option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        switch (index.Type)
+                                        {
+                                            case IndexValueType.Integer:
+                                            case IndexValueType.Float:
+                                                <input type="number" class="form-control"
+                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
+
+                                            case IndexValueType.DateTime:
+                                                <input type="date" class="form-control"
+                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
+
+                                            case IndexValueType.String:
+                                                <input type="text" class="form-control"
+                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value" />
+                                                break;
+                                        }
+                                    }
+                                </div>
+                                <div class="col-md-1">
+                                    <button class="btn btn-default pull-left" onclick="onRemoveSearchInput('@index.Id')" type="button" title="Remove this condition">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                                <br />
+                            </div>
+                        </div>
+                    }
+
+
                 </form>
 
             </div>
