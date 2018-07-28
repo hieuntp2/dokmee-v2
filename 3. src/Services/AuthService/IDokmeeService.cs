@@ -34,5 +34,13 @@ namespace DokCapture.ServicenNetFramework.Auth
 		/// <param name="cabinetId"></param>
 		/// <returns></returns>
 		IEnumerable<DokmeeIndex> GetCabinetIndexes(string username, string cabinetId);
+
+		/// <summary>
+		/// Move files to Temp Folder
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="args"></param>
+		/// <param name="tempFolder"></param>
+		void Complete(string username, Dictionary<object, object> args, string tempFolder, string cabinetId);
 	}
 }

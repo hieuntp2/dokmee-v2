@@ -112,12 +112,6 @@ namespace Services.AuthService
                 throw new ArgumentException("username is null or empty");
             }
 
-            //UserLogin user = _tempDbService.GetUserLogin(username);
-            //if (_dmsConnector == null)
-            //{
-            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            //}
-
             DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
             IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
             return dmsNodes;
@@ -125,11 +119,6 @@ namespace Services.AuthService
 
         public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
         {
-            //UserLogin user = _tempDbService.GetUserLogin(username);
-            //if (_dmsConnector == null)
-            //{
-            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            //}
             var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
                 : DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
 
@@ -142,12 +131,7 @@ namespace Services.AuthService
             {
                 throw new ArgumentException("username is null or empty");
             }
-            //UserLogin user = _tempDbService.GetUserLogin(username);
 
-            //if (_dmsConnector == null)
-            //{
-            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            //}
             IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
             Guid id = Guid.Empty;
             if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
@@ -185,20 +169,12 @@ namespace Services.AuthService
             }
             UserLogin user = _tempDbService.GetUserLogin(username);
             IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-            var cabinetId = args["CabinetId"].ToString();
-            Guid idTemp = Guid.Empty;
-            //if (_dmsConnector == null)
-            //{
-            //    if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out idTemp))
-            //    {
-            //        CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            //        _dmsConnector.RegisterCabinet(idTemp);
-            //    }
-            //}
+            var cabinetIdTemp = args["CabinetId"].ToString();
+            Guid cabinetId = Guid.Empty;
 
-            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out idTemp))
+            if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
             {
-                DmsConnectorProperty.RegisterCabinet(idTemp);
+                DmsConnectorProperty.RegisterCabinet(cabinetId);
             }
             
             var status = args["CustomerStatus"].ToString().Split(';');
@@ -209,52 +185,24 @@ namespace Services.AuthService
                     var info = item.Split(':');
                     if (info.Length == 2)
                     {
-                        var nodeId = info[0].Trim();
+                        var nodeIdTemp = info[0].Trim();
                         var customerStatus = info[1].Trim();
-                        Guid id = Guid.Empty;
-                        if (!string.IsNullOrEmpty(nodeId) && Guid.TryParse(nodeId, out id))
-                        {
-                            var fileSystems = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
-                            if (fileSystems != null && fileSystems.Any())
-                            {
-                                var file = fileSystems.First();
-                                var dokmeeIndexInfos = file.IndexFieldPairCollection;
-                                if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
-                                {
-                                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
-                                    if (statusIndex != null)
-                                    {
-                                        statusIndex.IndexValue = customerStatus;
-                                        IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
-                                        {
-                                            DokmeeIndexID = x.IndexFieldGuid,
-                                            Name = x.IndexName,
-                                            Value = x.IndexValue,
-                                            SortOrder = x.SortOrder,
-                                            CabinetID = idTemp
-                                        });
-                                        DmsConnectorProperty.UpdateIndex(id, dokmeeIndexes);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                        Guid nodeId = Guid.Empty;
+                        if (!string.IsNullOrEmpty(nodeIdTemp) && Guid.TryParse(nodeIdTemp, out nodeId))
+						{
+							UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+						}
+					}
                 }
             }
         }
 
-        public void Preview(string username, string id, string cabinetId)
+		public void Preview(string username, string id, string cabinetId)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
                 throw new ArgumentException("username is null or empty");
             }
-            //UserLogin user = _tempDbService.GetUserLogin(username);
-            //if (_dmsConnector == null)
-            //{
-            //    CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-            //    _dmsConnector.RegisterCabinet(new Guid(cabinetId));
-            //}
 
             DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
             var config = Assembly.GetExecutingAssembly().Location;
@@ -310,7 +258,79 @@ namespace Services.AuthService
 			return results;
 		}
 
+		/// <summary>
+		/// Move files to Temp Folder
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="args"></param>
+		/// <param name="tempFolder"></param>
+		public void Complete(string username, Dictionary<object, object> args, string tempFolder, string cabinetIdTemp)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
+			if (string.IsNullOrWhiteSpace(tempFolder))
+			{
+				throw new ArgumentException("Temp folder is null or empty");
+			}
+			UserLogin user = _tempDbService.GetUserLogin(username);
+			IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+			Guid cabinetId = Guid.Empty;
+			if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
+			{
+				DmsConnectorProperty.RegisterCabinet(cabinetId);
+			}
+
+			var status = args["NodeId"].ToString().Split(';');
+			if (status.Length > 0)
+			{
+				foreach (var noteIdTemp in status)
+				{
+					Guid nodeId = Guid.Empty;
+					if (!string.IsNullOrEmpty(noteIdTemp) && Guid.TryParse(noteIdTemp, out nodeId))
+					{
+						var folders = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Folder, tempFolder);
+						if (folders != null && folders.ToList().Count == 1)
+						{
+							var folder = folders.First();
+							DmsConnectorProperty.MoveFile(noteIdTemp, folder.ID.ToString());
+							//update status to Complete
+							var customerStatus = "Complete";
+							UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+						}
+					}
+				}
+			}
+		}
+
 		#region private methods
+		private void UpdateCustomerStatus(Guid cabinetId, string customerStatus, Guid nodeId)
+		{
+			var fileSystems = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId.ToString()).DmsFilesystem;
+			if (fileSystems != null && fileSystems.Any())
+			{
+				var file = fileSystems.First();
+				var dokmeeIndexInfos = file.IndexFieldPairCollection;
+				if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
+				{
+					var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
+					if (statusIndex != null)
+					{
+						statusIndex.IndexValue = customerStatus;
+						IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
+						{
+							DokmeeIndexID = x.IndexFieldGuid,
+							Name = x.IndexName,
+							Value = x.IndexValue,
+							SortOrder = x.SortOrder,
+							CabinetID = cabinetId
+						});
+						DmsConnectorProperty.UpdateIndex(nodeId, dokmeeIndexes);
+					}
+				}
+			}
+		}
 
 		private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
         {
