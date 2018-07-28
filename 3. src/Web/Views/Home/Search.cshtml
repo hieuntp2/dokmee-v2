@@ -104,7 +104,7 @@
                                     <!--Nothing-->
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="pull-right">@index.Title</label>
+                                    <label class="pull-right col-form-label">@index.Title</label>
                                 </div>
                                 <div class="col-md-3">
                                     <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
@@ -187,18 +187,19 @@
                 </div>
             </div>
             <hr />
-            <div class="box-body">
-                <table class="table" id="tblfileSystems">
+        <div class="box-body">
+            <div class="document-table-wrapper">
+                <table class="table document-table" id="tblfileSystems">
                     <thead>
                         <tr>
-                            <th>
+                            <th style="width: 100%;">
                                 <input type="checkbox" name="all" id="checkbox-all">
                             </th>
-                            <th>EXT</th>
+                            <th style="width: 100%;">EXT</th>
 
                             @foreach (var head in Model.TableTitles)
                             {
-                                <th>@head.Title</th>
+                                <th style="width: 100%;">@head.Title</th>
                             }
                         </tr>
                     </thead>
@@ -214,7 +215,7 @@
                                             <input type="checkbox" id="checkbox" class="select-doc-item">
                                         </div>
                                     </td>
-                                    <td onclick="preview('@Model.CabinetId','@doc.Id')">
+                                    <td onclick="preview('@Model.CabinetId', '@doc.Id')">
                                         @Html.Partial("_itemIcon", doc.Type)
                                     </td>
 
@@ -259,7 +260,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="@(2+Model.DocumentItems.Count)">
+                                <td colspan="@(2 + Model.TableTitles.Count)">
                                     <strong>No document found!</strong>
                                 </td>
                             </tr>
@@ -267,7 +268,9 @@
                     </tbody>
                 </table>
 
+
             </div>
+        </div>
             <div class="box-footer">
 
             </div>

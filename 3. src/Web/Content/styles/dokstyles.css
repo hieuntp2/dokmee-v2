@@ -24,8 +24,14 @@
     margin: 2px; }
     .my-box .box-header h3 {
       margin: 0px; }
+    .my-box .box-header img {
+      width: 50px;
+      height: 50px; }
   .my-box .box-body {
     margin: 5px; }
+
+.box-header-boder {
+  border-top: 15px solid #3288e6 !important; }
 
 .folder-item-icon {
   width: 20px;
@@ -40,11 +46,26 @@
   margin: auto;
   text-align: center;
   min-height: 200px;
-  vertical-align: middle; }
+  vertical-align: middle;
+  z-index: 999; }
   .loading-overlay img {
     width: 50px;
     height: 50px;
     vertical-align: middle;
     top: 30%;
     position: absolute; }
+
+.document-table {
+  width: 100%;
+  height: auto; }
+  .document-table th {
+    white-space: nowrap; }
+  .document-table tr td {
+    white-space: nowrap; }
+    .document-table tr td .form-control {
+      padding: 3px 5px !important;
+      height: auto !important; }
+
+.document-table-wrapper {
+  overflow: auto; }
 
