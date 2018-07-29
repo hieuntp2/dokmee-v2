@@ -185,12 +185,12 @@ namespace Web.Controllers
 				foreach (var condition in conditions)
 				{
 					var docIndex = item.Indexs.SingleOrDefault(t => t.Id.Equals(condition.Id));
-					if (docIndex != null)
+					if (docIndex != null && docIndex.Value != null)
 					{
+						var indexValue = docIndex.Value.ToString();
+						var conditionValue = condition.ValueString;
 						if (docIndex.Type == IndexValueType.DateTime)
 						{
-							var indexValue = docIndex.ValueString;
-							var conditionValue = condition.ValueString;
 							if (!(DateTime.TryParse(indexValue, out DateTime docIndexValue)
 								&& DateTime.TryParse(conditionValue, out DateTime conditionIndexValue)
 								&& docIndexValue.Date == conditionIndexValue.Date))
@@ -201,7 +201,7 @@ namespace Web.Controllers
 						}
 						else
 						{
-							if (!docIndex.ValueString.Contains(condition.ValueString))
+							if (!indexValue.Contains(conditionValue))
 							{
 								removeDocs.Add(item);
 								break;
