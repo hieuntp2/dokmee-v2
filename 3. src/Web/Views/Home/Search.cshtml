@@ -1,5 +1,6 @@
 ﻿@using System.Activities.Statements
 @using Dokmee.Dms.Advanced.WebAccess.Data
+@using Web.ViewModels.Elements
 @model Web.ViewModels.Home.SearchModel
 @{
     ViewBag.Title = "Search";
@@ -12,7 +13,6 @@
         <div class="my-box box-header-boder">
             <div class="box-header">
                 <h3>Search</h3>
-
                 <form action="Search" method="post" id="search-form">
                     @Html.HiddenFor(model => model.CabinetId)
 
@@ -43,19 +43,14 @@
 
                                     if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                     {
-                                        string value = index.ValueString;
-                                        <select class="form-control index-select-input" style="margin: auto;"
-                                                id="search-index-@index.Id">
-                                            <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
-                                                New
-                                            </option>
-                                            <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
-                                                Updated
-                                            </option>
-                                            <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
-                                                Complete
-                                            </option>
-                                        </select>
+                                        DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                        {
+                                            ElementId = "search-index-" + index.Id,
+                                            ElementClass = "index-select-input",
+                                            SelectedValue = index.ValueString
+                                        };
+
+                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                     }
                                     else
                                     {
@@ -63,7 +58,7 @@
                                         {
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
-                                                <input type="number" class="form-control index-select-input" style="display: none;"
+                                                <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
                                                        id="search-index-@index.Id" placeholder="@index.Title" />
                                                 break;
 
@@ -114,25 +109,15 @@
 
                                     @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                     {
-                                        string value = index.ValueString;
-                                        <select class="form-control" style="margin: auto;"
-                                                name="TableTitles[@i].Value" id="search-input-index-@index.Id"
-                                                value="@value">
-                                            @if (string.IsNullOrWhiteSpace(value))
-                                            {
-                                                <option selected value=""></option>
-                                            }
+                                        DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                        {
+                                            ElementId = "search-input-index-" + index.Id,
+                                            ElementName = "TableTitles[" + i + "].Value",
+                                            SelectedValue = index.ValueString,
 
-                                            <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
-                                                New
-                                            </option>
-                                            <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
-                                                Updated
-                                            </option>
-                                            <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
-                                                Complete
-                                            </option>
-                                        </select>
+                                        };
+
+                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                     }
                                     else
                                     {
@@ -140,7 +125,7 @@
                                         {
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
-                                                <input type="number" class="form-control"
+                                                <input type="number" class="form-control" step="0.00001"
                                                        value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
                                                        name="TableTitles[@i].Value" />
                                                 break;
@@ -171,10 +156,7 @@
                             </div>
                         </div>
                     }
-
-
                 </form>
-
             </div>
             <hr />
 
@@ -187,90 +169,88 @@
                 </div>
             </div>
             <hr />
-        <div class="box-body">
-            <div class="document-table-wrapper">
-                <table class="table document-table" id="tblfileSystems">
-                    <thead>
-                        <tr>
-                            <th style="width: 100%;">
-                                <input type="checkbox" name="all" id="checkbox-all">
-                            </th>
-                            <th style="width: 100%;">EXT</th>
+            <div class="box-body">
+                <div class="document-table-wrapper">
+                    <table class="table document-table" id="tblfileSystems">
+                        <thead>
+                            <tr>
+                                <th style="width: 100%;">
+                                    <input type="checkbox" name="all" id="checkbox-all">
+                                </th>
+                                <th style="width: 100%;">EXT</th>
 
-                            @foreach (var head in Model.TableTitles)
+                                @foreach (var head in Model.TableTitles)
+                                {
+                                    <th style="width: 100%;">@head.Title</th>
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model.DocumentItems.Any())
                             {
-                                <th style="width: 100%;">@head.Title</th>
-                            }
-                        </tr>
-                    </thead>
+                                foreach (var doc in Model.DocumentItems)
+                                {
+                                    <tr nodeId="@doc.Id">
+                                        <td>
+                                            <div class="icheckbox">
+                                                <input type="checkbox" id="checkbox" class="select-doc-item">
+                                            </div>
+                                        </td>
+                                        <td onclick="preview('@Model.CabinetId', '@doc.Id')">
+                                            @Html.Partial("_itemIcon", doc.Type)
+                                        </td>
 
-                    <tbody>
-                        @if (Model.DocumentItems.Any())
-                        {
-                            foreach (var doc in Model.DocumentItems)
-                            {
-                                <tr nodeId="@doc.Id">
-                                    <td>
-                                        <div class="icheckbox">
-                                            <input type="checkbox" id="checkbox" class="select-doc-item">
-                                        </div>
-                                    </td>
-                                    <td onclick="preview('@Model.CabinetId', '@doc.Id')">
-                                        @Html.Partial("_itemIcon", doc.Type)
-                                    </td>
-
-                                    @if (doc.Indexs.Any())
-                                    {
-                                        foreach (var index in doc.Indexs)
+                                        @if (doc.Indexs.Any())
                                         {
-                                            if (index.Title.ToUpper() == "DOCUMENT STATUS")
+                                            foreach (var index in doc.Indexs)
                                             {
-                                                if (string.IsNullOrEmpty(index.ValueString))
+                                                if (index.Title.ToUpper() == "DOCUMENT STATUS")
                                                 {
-                                                    index.ValueString = "New";
+                                                    if (string.IsNullOrEmpty(index.ValueString))
+                                                    {
+                                                        index.ValueString = "New";
+                                                    }
+                                                    string value = index.ValueString;
+                                                    <td>
+                                                        @{
+                                                            DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                                            {
+                                                                ElementId = "status",
+                                                                SelectedValue = index.ValueString,
+
+                                                            };
+
+                                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                                        }
+                                                    </td>
+
                                                 }
-                                                string value = index.ValueString;
-                                                <td>
-                                                    <select class="form-control" style="margin: auto;"
-                                                            id="status" value="@value">
-                                                        <option @(value.ToUpper().Equals("NEW") ? "selected" : "") value="New">
-                                                            New
-                                                        </option>
-                                                        <option @(value.ToUpper().Equals("UPDATED") ? "selected" : "") value="Updated">
-                                                            Updated
-                                                        </option>
-                                                        <option @(value.ToUpper().Equals("COMPLETE") ? "selected" : "") value="Complete">
-                                                            Complete
-                                                        </option>
-                                                    </select>
-                                                </td>
+                                                else
+                                                {
+                                                    <td>@index.Value</td>
+                                                }
 
                                             }
-                                            else
-                                            {
-                                                <td>@index.Value</td>
-                                            }
-
                                         }
-                                    }
 
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="@(2 + Model.TableTitles.Count)">
+                                        <strong>No document found!</strong>
+                                    </td>
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="@(2 + Model.TableTitles.Count)">
-                                    <strong>No document found!</strong>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
 
 
+                </div>
             </div>
-        </div>
             <div class="box-footer">
 
             </div>
