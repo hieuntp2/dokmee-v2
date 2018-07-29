@@ -1,15 +1,12 @@
 ﻿
 using Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Services.AuthService.Models;
+using System;
+using System.Linq;
 
 namespace Services.TempDbService
 {
-    public class TempDbService: ITempDbService
+	public class TempDbService: ITempDbService
     {
         // private 
         private DokmeeTempEntities _dbContext;

@@ -51,51 +51,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DokmeeTempDbModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DokmeeTempDbModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DokmeeTempDbModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DokmeeTempDbModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DokmeeTempDbModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DokmeeTempDbModel.edmx</DependentUpon>
-    </Compile>
+    <Compile Include="DokmeeTempEntities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserLogin.cs">
-      <DependentUpon>DokmeeTempDbModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="UserLogin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="DokmeeTempDbModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DokmeeTempDbModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="App.Config" />
-    <None Include="DokmeeTempDbModel.edmx.diagram">
-      <DependentUpon>DokmeeTempDbModel.edmx</DependentUpon>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DokmeeTempDbModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DokmeeTempDbModel.edmx</DependentUpon>
-      <LastGenOutput>DokmeeTempDbModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="DokmeeTempDbModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DokmeeTempDbModel.edmx</DependentUpon>
-      <LastGenOutput>DokmeeTempDbModel.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
