@@ -18,196 +18,196 @@ using Services.UserSerivce;
 
 namespace Services.AuthService
 {
-    public class DokmeeService : IDokmeeService
-    {
-        private ISessionHelperService _sessionHelperService;
-        private DmsConnector _dmsConnector;
-        private ConnectorModel _connectorModel;
-        private ITempDbService _tempDbService;
-        private IUserService _userService;
+	public class DokmeeService : IDokmeeService
+	{
+		private ISessionHelperService _sessionHelperService;
+		private DmsConnector _dmsConnector;
+		private ConnectorModel _connectorModel;
+		private ITempDbService _tempDbService;
+		private IUserService _userService;
 
-        public DmsConnector DmsConnectorProperty
-        {
-            get
-            {
-                if (!_userService.IsAuthenticate())
-                {
-                    throw new Exception("User not authenticated");
-                }
-                if (_dmsConnector == null)
-                {
-                    var username = _userService.GetUserId();
-                    var tempLogin = _tempDbService.GetUserLogin(username);
-                    CreateConnector(tempLogin.Username, tempLogin.Password, (ConnectorType)tempLogin.Type);
-                }
-                return _dmsConnector;
-            }
-            set { _dmsConnector = value; }
-        }
+		public DmsConnector DmsConnectorProperty
+		{
+			get
+			{
+				if (!_userService.IsAuthenticate())
+				{
+					throw new Exception("User not authenticated");
+				}
+				if (_dmsConnector == null)
+				{
+					var username = _userService.GetUserId();
+					var tempLogin = _tempDbService.GetUserLogin(username);
+					CreateConnector(tempLogin.Username, tempLogin.Password, (ConnectorType)tempLogin.Type);
+				}
+				return _dmsConnector;
+			}
+			set { _dmsConnector = value; }
+		}
 
-        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
-        {
-            _sessionHelperService = sessionHelperService;
-            _tempDbService = tempDbService;
-            _userService = userService;
-        }
+		public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
+		{
+			_sessionHelperService = sessionHelperService;
+			_tempDbService = tempDbService;
+			_userService = userService;
+		}
 
-        private ConnectorModel ConnectorVm
-        {
-            get
-            {
-                if (_connectorModel == null)
-                {
-                    _connectorModel = new ConnectorModel();
-                    ConnectorVm.SelectedConnectorType = ConnectorVm.ConnectorTypes.First();
-                }
-                return _connectorModel;
-            }
-        }
+		private ConnectorModel ConnectorVm
+		{
+			get
+			{
+				if (_connectorModel == null)
+				{
+					_connectorModel = new ConnectorModel();
+					ConnectorVm.SelectedConnectorType = ConnectorVm.ConnectorTypes.First();
+				}
+				return _connectorModel;
+			}
+		}
 
-        public Task<SignInResult> Login(string username, string password, ConnectorType type)
-        {
-            DokUser user = new DokUser();
-            SignInResult result = SignInResult.Success;
+		public Task<SignInResult> Login(string username, string password, ConnectorType type)
+		{
+			DokUser user = new DokUser();
+			SignInResult result = SignInResult.Success;
 
-            if (_dmsConnector == null)
-            {
-                CreateConnector(username, password, type);
-            }
+			if (_dmsConnector == null)
+			{
+				CreateConnector(username, password, type);
+			}
 
-            return Task.FromResult(result);
-        }
+			return Task.FromResult(result);
+		}
 
-        public IEnumerable<DokmeeCabinet> GetCurrentUserCabinet(string username)
-        {
-            UserLogin user = _tempDbService.GetUserLogin(username);
-            if (user == null)
-            {
-                throw new Exception("User login is not save to database.");
-            }
+		public IEnumerable<DokmeeCabinet> GetCurrentUserCabinet(string username)
+		{
+			UserLogin user = _tempDbService.GetUserLogin(username);
+			if (user == null)
+			{
+				throw new Exception("User login is not save to database.");
+			}
 
-            if (_dmsConnector == null)
-            {
-                var cabinets = CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-                return cabinets.DokmeeCabinets;
-            }
+			if (_dmsConnector == null)
+			{
+				var cabinets = CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+				return cabinets.DokmeeCabinets;
+			}
 
-            var loginResult = _dmsConnector.Login(new LogonInfo
-            {
-                Username = user.Username,
-                Password = user.Password
-            });
-            return loginResult.DokmeeCabinets;
-        }
+			var loginResult = _dmsConnector.Login(new LogonInfo
+			{
+				Username = user.Username,
+				Password = user.Password
+			});
+			return loginResult.DokmeeCabinets;
+		}
 
-        public IEnumerable<DmsNode> GetCabinetContent(string cabinetId, string username)
-        {
-            if (string.IsNullOrWhiteSpace(cabinetId))
-            {
-                throw new ArgumentException("cabinetId is null or empty");
-            }
+		public IEnumerable<DmsNode> GetCabinetContent(string cabinetId, string username)
+		{
+			if (string.IsNullOrWhiteSpace(cabinetId))
+			{
+				throw new ArgumentException("cabinetId is null or empty");
+			}
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("username is null or empty");
-            }
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
 
-            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
-            IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
-            return dmsNodes;
-        }
+			DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+			IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
+			return dmsNodes;
+		}
 
-        public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
-        {
-            var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
-                : DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
+		public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
+		{
+			var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
+				: DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
 
-            return Task.FromResult(result);
-        }
+			return Task.FromResult(result);
+		}
 
-        public IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId)
-        {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("username is null or empty");
-            }
+		public IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
 
-            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-            Guid id = Guid.Empty;
-            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
-            {
-                DmsConnectorProperty.RegisterCabinet(id);
-                if (isFolder)
-                {
-                    results = DmsConnectorProperty.Search(SearchFieldType.TextIndex, name, "Folder Title").DmsFilesystem;
-                }
-                else
-                {
-                    try
-                    {
-                        var nodes = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Document, name);
-                        if (nodes != null && nodes.Any())
-                        {
-                            var nodeId = nodes.First()?.ID.ToString();
-                            if (!string.IsNullOrEmpty(nodeId))
-                            {
-                                results = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-            return results;
-        }
+			IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+			Guid id = Guid.Empty;
+			if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+			{
+				DmsConnectorProperty.RegisterCabinet(id);
+				if (isFolder)
+				{
+					results = DmsConnectorProperty.Search(SearchFieldType.TextIndex, name, "Folder Title").DmsFilesystem;
+				}
+				else
+				{
+					try
+					{
+						var nodes = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Document, name);
+						if (nodes != null && nodes.Any())
+						{
+							var nodeId = nodes.First()?.ID.ToString();
+							if (!string.IsNullOrEmpty(nodeId))
+							{
+								results = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
+							}
+						}
+					}
+					catch { }
+				}
+			}
+			return results;
+		}
 
-        public void UpdateIndex(string username, Dictionary<object, object> args)
-        {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("username is null or empty");
-            }
-            UserLogin user = _tempDbService.GetUserLogin(username);
-            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-            var cabinetIdTemp = args["CabinetId"].ToString();
-            Guid cabinetId = Guid.Empty;
+		public void UpdateIndex(string username, Dictionary<object, object> args)
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
+			UserLogin user = _tempDbService.GetUserLogin(username);
+			IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+			var cabinetIdTemp = args["CabinetId"].ToString();
+			Guid cabinetId = Guid.Empty;
 
-            if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
-            {
-                DmsConnectorProperty.RegisterCabinet(cabinetId);
-            }
-            
-            var status = args["CustomerStatus"].ToString().Split(';');
-            if (status.Length > 0)
-            {
-                foreach (var item in status)
-                {
-                    var info = item.Split(':');
-                    if (info.Length == 2)
-                    {
-                        var nodeIdTemp = info[0].Trim();
-                        var customerStatus = info[1].Trim();
-                        Guid nodeId = Guid.Empty;
-                        if (!string.IsNullOrEmpty(nodeIdTemp) && Guid.TryParse(nodeIdTemp, out nodeId))
+			if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
+			{
+				DmsConnectorProperty.RegisterCabinet(cabinetId);
+			}
+
+			var status = args["CustomerStatus"].ToString().Split(';');
+			if (status.Length > 0)
+			{
+				foreach (var item in status)
+				{
+					var info = item.Split(':');
+					if (info.Length == 2)
+					{
+						var nodeIdTemp = info[0].Trim();
+						var customerStatus = info[1].Trim();
+						Guid nodeId = Guid.Empty;
+						if (!string.IsNullOrEmpty(nodeIdTemp) && Guid.TryParse(nodeIdTemp, out nodeId))
 						{
 							UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
 						}
 					}
-                }
-            }
-        }
+				}
+			}
+		}
 
 		public void Preview(string username, string id, string cabinetId)
-        {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("username is null or empty");
-            }
+		{
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new ArgumentException("username is null or empty");
+			}
 
-            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
-            var config = Assembly.GetExecutingAssembly().Location;
-            Process.Start(DmsConnectorProperty.ViewFile(id), config);
-        }
+			DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+			var config = Assembly.GetExecutingAssembly().Location;
+			Process.Start(DmsConnectorProperty.ViewFile(id), config);
+		}
 
 		/// <summary>
 		/// Search File System by Index
@@ -314,10 +314,27 @@ namespace Services.AuthService
 				var dokmeeIndexInfos = file.IndexFieldPairCollection;
 				if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
 				{
+					var listIndexes = DmsConnectorProperty.GetCabinetIndexInfoByID(cabinetId);
 					var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
 					if (statusIndex != null)
 					{
 						statusIndex.IndexValue = customerStatus;
+						//use for test:
+						var dateIndexes = listIndexes.Where(x => x.ValueType == IndexValueType.DateTime).ToList();
+						if (dateIndexes.Any())
+						{
+							dateIndexes.ForEach(index =>
+							{
+								var fileIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName == index.Name);
+								if (fileIndex != null)
+								{
+									fileIndex.IndexValue = DateTime.Now.ToString();
+								}
+							});
+						}
+						statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "CUSTOMER #");
+						statusIndex.IndexValue = "12";
+
 						IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
 						{
 							DokmeeIndexID = x.IndexFieldGuid,
@@ -333,74 +350,74 @@ namespace Services.AuthService
 		}
 
 		private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
-        {
-            username = username ?? _sessionHelperService.Username;
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new InvalideUsernameException("Username is null");
-            }
-            password = password ?? _sessionHelperService.Password;
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new InvalidePasswordException("Password is null");
-            }
-            //// initialize connector
-            DokmeeApplication dApp = DokmeeApplication.DokmeeDMS;
+		{
+			username = username ?? _sessionHelperService.Username;
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				throw new InvalideUsernameException("Username is null");
+			}
+			password = password ?? _sessionHelperService.Password;
+			if (string.IsNullOrWhiteSpace(password))
+			{
+				throw new InvalidePasswordException("Password is null");
+			}
+			//// initialize connector
+			DokmeeApplication dApp = DokmeeApplication.DokmeeDMS;
 
-            if (type == ConnectorType.DMS)
-            {
-                ConnectionInfo connInfo = new ConnectionInfo
-                {
-                    ServerName = ConnectorVm.Server,
-                    UserID = "sa",
-                    Password = "123456"
-                };
+			if (type == ConnectorType.DMS)
+			{
+				ConnectionInfo connInfo = new ConnectionInfo
+				{
+					ServerName = ConnectorVm.Server,
+					UserID = "sa",
+					Password = "123456"
+				};
 
-                // register connection
-                dApp = DokmeeApplication.DokmeeDMS;
-                _dmsConnector = new DmsConnector(dApp);
-                _dmsConnector.RegisterConnection<ConnectionInfo>(connInfo); // =>> this code cause lost session. Why???
-            }
-            else if (type == ConnectorType.WEB)
-            {
-                // register connection
-                dApp = DokmeeApplication.DokmeeWeb;
-                _dmsConnector = new DmsConnector(dApp);
-                _dmsConnector.RegisterConnection<string>(ConnectorVm.HostUrl);
-            }
-            else if (type == ConnectorType.CLOUD)
-            {
-                // register connection
-                dApp = DokmeeApplication.DokmeeCloud;
-                _dmsConnector = new DmsConnector(dApp);
-                _dmsConnector.RegisterConnection<string>("https://www.dokmeecloud.com");
-            }
+				// register connection
+				dApp = DokmeeApplication.DokmeeDMS;
+				_dmsConnector = new DmsConnector(dApp);
+				_dmsConnector.RegisterConnection<ConnectionInfo>(connInfo); // =>> this code cause lost session. Why???
+			}
+			else if (type == ConnectorType.WEB)
+			{
+				// register connection
+				dApp = DokmeeApplication.DokmeeWeb;
+				_dmsConnector = new DmsConnector(dApp);
+				_dmsConnector.RegisterConnection<string>(ConnectorVm.HostUrl);
+			}
+			else if (type == ConnectorType.CLOUD)
+			{
+				// register connection
+				dApp = DokmeeApplication.DokmeeCloud;
+				_dmsConnector = new DmsConnector(dApp);
+				_dmsConnector.RegisterConnection<string>("https://www.dokmeecloud.com");
+			}
 
-            var loginResult = _dmsConnector.Login(new LogonInfo
-            {
-                Username = username,
-                Password = password
-            });
+			var loginResult = _dmsConnector.Login(new LogonInfo
+			{
+				Username = username,
+				Password = password
+			});
 
-            return loginResult;
-        }
+			return loginResult;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 
-    public class InvalideUsernameException : ArgumentException
-    {
-        public InvalideUsernameException(string mesage) : base(mesage)
-        {
+	public class InvalideUsernameException : ArgumentException
+	{
+		public InvalideUsernameException(string mesage) : base(mesage)
+		{
 
-        }
-    }
+		}
+	}
 
-    public class InvalidePasswordException : ArgumentException
-    {
-        public InvalidePasswordException(string mesage) : base(mesage)
-        {
+	public class InvalidePasswordException : ArgumentException
+	{
+		public InvalidePasswordException(string mesage) : base(mesage)
+		{
 
-        }
-    }
+		}
+	}
 }
