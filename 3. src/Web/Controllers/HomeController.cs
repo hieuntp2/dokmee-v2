@@ -160,7 +160,7 @@ namespace Web.Controllers
 			var firstCondition = conditions.First();
 			conditions.Remove(firstCondition);
 
-			conditions.Remove(conditions.First());//for test
+			//conditions.Remove(conditions.First());//for test
 
 			SearchFieldType searchFieldType;
 			switch (firstCondition.Type)

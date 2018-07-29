@@ -53,6 +53,8 @@ namespace Web.ViewModels.Home
         {
             if (input != null)
             {
+                String[] checkConvertdate = input as String[];
+                var getConvert = checkConvertdate == null ? string.Empty : checkConvertdate[0];
                 switch (type)
                 {
                     case IndexValueType.String:
@@ -67,27 +69,19 @@ namespace Web.ViewModels.Home
                             return checkConvert[0];
                         }
                     case IndexValueType.DateTime:
-                        string getConvert = string.Empty;
-                        String[] checkConvertdate = input as String[];
-                        if (checkConvertdate == null)
-                        {
-                            getConvert = (string)input;
-                        }
-                        else
-                        {
-                            getConvert = checkConvertdate[0];
-                        }
-
                         if (!string.IsNullOrWhiteSpace(getConvert))
                         {
                             return getConvert.ToString();
                         }
-
                         return string.Empty;
 
                     case IndexValueType.Float:
                     case IndexValueType.Integer:
-                        return input.ToString();
+                        if (!string.IsNullOrWhiteSpace(getConvert))
+                        {
+                            return getConvert.ToString();
+                        }
+                        return string.Empty;
                 }
 
             }
