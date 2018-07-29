@@ -263,6 +263,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\Elements\DocumentItemListModel.cs" />
     <Compile Include="ViewModels\Elements\DocumentStatusSelectModel.cs" />
     <Compile Include="ViewModels\Home\DetailModel.cs" />
     <Compile Include="ViewModels\Home\IndexModel.cs" />
@@ -473,6 +474,7 @@
     <Content Include="Views\Home\Search.cshtml" />
     <Content Include="Views\Home\_documentStatusSelect.cshtml" />
     <Content Include="Views\Partials\_DocumetStatusSelection.cshtml" />
+    <Content Include="Views\Partials\_DocumentItemListPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

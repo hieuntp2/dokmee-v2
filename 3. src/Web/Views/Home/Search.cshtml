@@ -160,7 +160,6 @@
             </div>
             <hr />
 
-
             <div class="row">
                 <div class="col-md-6">
                 </div>
@@ -170,86 +169,15 @@
             </div>
             <hr />
             <div class="box-body">
-                <div class="document-table-wrapper">
-                    <table class="table document-table" id="tblfileSystems">
-                        <thead>
-                            <tr>
-                                <th style="width: 100%;">
-                                    <input type="checkbox" name="all" id="checkbox-all">
-                                </th>
-                                <th style="width: 100%;">EXT</th>
-
-                                @foreach (var head in Model.TableTitles)
-                                {
-                                    <th style="width: 100%;">@head.Title</th>
-                                }
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @if (Model.DocumentItems.Any())
-                            {
-                                foreach (var doc in Model.DocumentItems)
-                                {
-                                    <tr nodeId="@doc.Id">
-                                        <td>
-                                            <div class="icheckbox">
-                                                <input type="checkbox" id="checkbox" class="select-doc-item">
-                                            </div>
-                                        </td>
-                                        <td onclick="preview('@Model.CabinetId', '@doc.Id')">
-                                            @Html.Partial("_itemIcon", doc.Type)
-                                        </td>
-
-                                        @if (doc.Indexs.Any())
-                                        {
-                                            foreach (var index in doc.Indexs)
-                                            {
-                                                if (index.Title.ToUpper() == "DOCUMENT STATUS")
-                                                {
-                                                    if (string.IsNullOrEmpty(index.ValueString))
-                                                    {
-                                                        index.ValueString = "New";
-                                                    }
-                                                    string value = index.ValueString;
-                                                    <td>
-                                                        @{
-                                                            DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
-                                                            {
-                                                                ElementId = "status",
-                                                                SelectedValue = index.ValueString,
-
-                                                            };
-
-                                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
-                                                        }
-                                                    </td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td>@index.Value</td>
-                                                }
-
-                                            }
-                                        }
-
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="@(2 + Model.TableTitles.Count)">
-                                        <strong>No document found!</strong>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-
-                </div>
+                @{
+                    DocumentItemListModel listIitems = new DocumentItemListModel()
+                    {
+                        DocumentItems = Model.DocumentItems,
+                        TableTitles = Model.TableTitles,
+                        CabinetId = Model.CabinetId
+                    };
+                    Html.RenderPartial("/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
+                }
             </div>
             <div class="box-footer">
 

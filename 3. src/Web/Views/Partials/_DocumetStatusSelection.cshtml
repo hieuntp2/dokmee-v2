@@ -4,13 +4,13 @@
 <select class="form-control @Model.ElementClass" style="margin: auto;" 
         name="@Model.ElementName"
         id="@Model.ElementId">
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.New.ToString().ToUpper()) ? "selected" : "") value="New">
+    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.New.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.New.ToString()">
         @EDocumentStatus.New.ToString()
     </option>
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Updated.ToString().ToUpper()) ? "selected" : "") value="Updated">
+    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Updated.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Updated.ToString()">
         @EDocumentStatus.Updated.ToString()
     </option>
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Complete.ToString().ToUpper()) ? "selected" : "") value="Complete">
+    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Complete.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Complete.ToString()">
         @EDocumentStatus.Complete.ToString()
     </option>
 </select>
