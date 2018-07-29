@@ -160,8 +160,6 @@ namespace Web.Controllers
 			var firstCondition = conditions.First();
 			conditions.Remove(firstCondition);
 
-			//conditions.Remove(conditions.First());//for test
-
 			SearchFieldType searchFieldType;
 			switch (firstCondition.Type)
 			{
@@ -189,10 +187,10 @@ namespace Web.Controllers
 					var docIndex = item.Indexs.SingleOrDefault(t => t.Id.Equals(condition.Id));
 					if (docIndex != null)
 					{
-						var indexValue = docIndex.ValueString;
-						var conditionValue = condition.ValueString;
 						if (docIndex.Type == IndexValueType.DateTime)
 						{
+							var indexValue = docIndex.ValueString;
+							var conditionValue = condition.ValueString;
 							if (!(DateTime.TryParse(indexValue, out DateTime docIndexValue)
 								&& DateTime.TryParse(conditionValue, out DateTime conditionIndexValue)
 								&& docIndexValue.Date == conditionIndexValue.Date))
