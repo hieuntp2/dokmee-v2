@@ -18,407 +18,407 @@ using Services.UserSerivce;
 
 namespace Services.AuthService
 {
-  public class DokmeeService : IDokmeeService
-  {
-    private ISessionHelperService _sessionHelperService;
-    private DmsConnector _dmsConnector;
-    private ConnectorModel _connectorModel;
-    private ITempDbService _tempDbService;
-    private IUserService _userService;
-
-    public DmsConnector DmsConnectorProperty
+    public class DokmeeService : IDokmeeService
     {
-      get
-      {
-        if (!_userService.IsAuthenticate())
+        private ISessionHelperService _sessionHelperService;
+        private DmsConnector _dmsConnector;
+        private ConnectorModel _connectorModel;
+        private ITempDbService _tempDbService;
+        private IUserService _userService;
+
+        public DmsConnector DmsConnectorProperty
         {
-          throw new Exception("User not authenticated");
-        }
-        if (_dmsConnector == null)
-        {
-          var username = _userService.GetUserId();
-          var tempLogin = _tempDbService.GetUserLogin(username);
-          CreateConnector(tempLogin.Username, tempLogin.Password, (ConnectorType)tempLogin.Type);
-        }
-        return _dmsConnector;
-      }
-      set { _dmsConnector = value; }
-    }
-
-    public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
-    {
-      _sessionHelperService = sessionHelperService;
-      _tempDbService = tempDbService;
-      _userService = userService;
-    }
-
-    private ConnectorModel ConnectorVm
-    {
-      get
-      {
-        if (_connectorModel == null)
-        {
-          _connectorModel = new ConnectorModel();
-          ConnectorVm.SelectedConnectorType = ConnectorVm.ConnectorTypes.First();
-        }
-        return _connectorModel;
-      }
-    }
-
-    public Task<SignInResult> Login(string username, string password, ConnectorType type)
-    {
-      DokUser user = new DokUser();
-      SignInResult result = SignInResult.Success;
-
-      if (_dmsConnector == null)
-      {
-        CreateConnector(username, password, type);
-      }
-
-      return Task.FromResult(result);
-    }
-
-    public IEnumerable<DokmeeCabinet> GetCurrentUserCabinet(string username)
-    {
-      UserLogin user = _tempDbService.GetUserLogin(username);
-      if (user == null)
-      {
-        throw new Exception("User login is not save to database.");
-      }
-
-      if (_dmsConnector == null)
-      {
-        var cabinets = CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
-        return cabinets.DokmeeCabinets;
-      }
-
-      var loginResult = _dmsConnector.Login(new LogonInfo
-      {
-        Username = user.Username,
-        Password = user.Password
-      });
-      return loginResult.DokmeeCabinets;
-    }
-
-    public IEnumerable<DmsNode> GetCabinetContent(string cabinetId, string username)
-    {
-      if (string.IsNullOrWhiteSpace(cabinetId))
-      {
-        throw new ArgumentException("cabinetId is null or empty");
-      }
-
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-
-      DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
-      IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
-      return dmsNodes;
-    }
-
-    public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
-    {
-      var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
-        : DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
-
-      return Task.FromResult(result);
-    }
-
-    public IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-
-      IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-      Guid id = Guid.Empty;
-      if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
-      {
-        DmsConnectorProperty.RegisterCabinet(id);
-        if (isFolder)
-        {
-          results = DmsConnectorProperty.Search(SearchFieldType.TextIndex, name, "Folder Title").DmsFilesystem;
-        }
-        else
-        {
-          try
-          {
-            var nodes = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Document, name);
-            if (nodes != null && nodes.Any())
+            get
             {
-              var nodeId = nodes.First()?.ID.ToString();
-              if (!string.IsNullOrEmpty(nodeId))
-              {
-                results = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
-              }
-            }
-          }
-          catch { }
-        }
-      }
-      return results;
-    }
-
-    public void UpdateIndex(string username, Dictionary<object, object> args)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-      UserLogin user = _tempDbService.GetUserLogin(username);
-      IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-      var cabinetIdTemp = args["CabinetId"].ToString();
-      Guid cabinetId = Guid.Empty;
-
-      if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
-      {
-        DmsConnectorProperty.RegisterCabinet(cabinetId);
-      }
-
-      var status = args["CustomerStatus"].ToString().Split(';');
-      if (status.Length > 0)
-      {
-        foreach (var item in status)
-        {
-          var info = item.Split(':');
-          if (info.Length == 2)
-          {
-            var nodeIdTemp = info[0].Trim();
-            var customerStatus = info[1].Trim();
-            Guid nodeId = Guid.Empty;
-            if (!string.IsNullOrEmpty(nodeIdTemp) && Guid.TryParse(nodeIdTemp, out nodeId))
-            {
-              UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
-            }
-          }
-        }
-      }
-    }
-
-    public string Preview(string username, string id, string cabinetId)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-
-      DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
-      //var config = Assembly.GetExecutingAssembly().Location;
-      //Process.Start(DmsConnectorProperty.ViewFile(id), config);
-      return DmsConnectorProperty.ViewFile(id);
-    }
-
-    /// <summary>
-    /// Search File System by Index
-    /// </summary>
-    /// <param name="fieldName"></param>
-    /// <param name="searchValue"></param>
-    /// <param name="cabinetId"></param>
-    /// <returns></returns>
-    public IEnumerable<DokmeeFilesystem> Search(string username, string fieldName, string searchValue, string cabinetId, SearchFieldType indexFieldType)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-
-      IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-      Guid id = Guid.Empty;
-      if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
-      {
-        DmsConnectorProperty.RegisterCabinet(id);
-        var lookupResults = DmsConnectorProperty.Search(indexFieldType, searchValue, fieldName);
-        results = lookupResults.DmsFilesystem;
-      }
-      return results;
-    }
-
-    /// <summary>
-    /// Get all Cabinet Indexes
-    /// </summary>
-    /// <param name="username"></param>
-    /// <param name="cabinetId"></param>
-    /// <returns></returns>
-    public IEnumerable<DokmeeIndex> GetCabinetIndexes(string username, string cabinetId)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-
-      IEnumerable<DokmeeIndex> results = new List<DokmeeIndex>();
-      Guid id = Guid.Empty;
-      if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
-      {
-        DmsConnectorProperty.RegisterCabinet(id);
-        results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);
-
-      }
-      return results;
-    }
-
-    /// <summary>
-    /// Move files to Temp Folder
-    /// </summary>
-    /// <param name="username"></param>
-    /// <param name="args"></param>
-    /// <param name="tempFolder"></param>
-    public void Complete(string username, Dictionary<object, object> args, string tempFolder, string cabinetIdTemp)
-    {
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new ArgumentException("username is null or empty");
-      }
-      if (string.IsNullOrWhiteSpace(tempFolder))
-      {
-        throw new ArgumentException("Temp folder is null or empty");
-      }
-      UserLogin user = _tempDbService.GetUserLogin(username);
-      IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
-      Guid cabinetId = Guid.Empty;
-      if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
-      {
-        DmsConnectorProperty.RegisterCabinet(cabinetId);
-      }
-
-      var status = args["NodeId"].ToString().Split(';');
-      if (status.Length > 0)
-      {
-        foreach (var noteIdTemp in status)
-        {
-          Guid nodeId = Guid.Empty;
-          if (!string.IsNullOrEmpty(noteIdTemp) && Guid.TryParse(noteIdTemp, out nodeId))
-          {
-            var folders = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Folder, tempFolder);
-            if (folders != null && folders.ToList().Count == 1)
-            {
-              var folder = folders.First();
-              DmsConnectorProperty.MoveFile(noteIdTemp, folder.ID.ToString());
-              //update status to Complete
-              var customerStatus = "Complete";
-              UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
-            }
-          }
-        }
-      }
-    }
-
-    #region private methods
-    private void UpdateCustomerStatus(Guid cabinetId, string customerStatus, Guid nodeId)
-    {
-      var fileSystems = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId.ToString()).DmsFilesystem;
-      if (fileSystems != null && fileSystems.Any())
-      {
-        var file = fileSystems.First();
-        var dokmeeIndexInfos = file.IndexFieldPairCollection;
-        if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
-        {
-          var listIndexes = DmsConnectorProperty.GetCabinetIndexInfoByID(cabinetId);
-          var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
-          if (statusIndex != null)
-          {
-            statusIndex.IndexValue = customerStatus;
-            //use for test:
-            var dateIndexes = listIndexes.Where(x => x.ValueType == IndexValueType.DateTime).ToList();
-            if (dateIndexes.Any())
-            {
-              dateIndexes.ForEach(index =>
-              {
-                var fileIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName == index.Name);
-                if (fileIndex != null)
+                if (!_userService.IsAuthenticate())
                 {
-                  fileIndex.IndexValue = DateTime.Now.ToString();
+                    throw new Exception("User not authenticated");
                 }
-              });
+                if (_dmsConnector == null)
+                {
+                    var username = _userService.GetUserId();
+                    var tempLogin = _tempDbService.GetUserLogin(username);
+                    CreateConnector(tempLogin.Username, tempLogin.Password, (ConnectorType)tempLogin.Type);
+                }
+                return _dmsConnector;
             }
-            statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "CUSTOMER #");
-            statusIndex.IndexValue = "12";
-
-            IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
-            {
-              DokmeeIndexID = x.IndexFieldGuid,
-              Name = x.IndexName,
-              Value = x.IndexValue,
-              SortOrder = x.SortOrder,
-              CabinetID = cabinetId
-            });
-            DmsConnectorProperty.UpdateIndex(nodeId, dokmeeIndexes);
-          }
+            set { _dmsConnector = value; }
         }
-      }
-    }
 
-    private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
-    {
-      username = username ?? _sessionHelperService.Username;
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        throw new InvalideUsernameException("Username is null");
-      }
-      password = password ?? _sessionHelperService.Password;
-      if (string.IsNullOrWhiteSpace(password))
-      {
-        throw new InvalidePasswordException("Password is null");
-      }
-      //// initialize connector
-      DokmeeApplication dApp = DokmeeApplication.DokmeeDMS;
-
-      if (type == ConnectorType.DMS)
-      {
-        ConnectionInfo connInfo = new ConnectionInfo
+        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
         {
-          ServerName = ConnectorVm.Server,
-          UserID = "sa",
-          Password = "123456"
-        };
+            _sessionHelperService = sessionHelperService;
+            _tempDbService = tempDbService;
+            _userService = userService;
+        }
 
-        // register connection
-        dApp = DokmeeApplication.DokmeeDMS;
-        _dmsConnector = new DmsConnector(dApp);
-        _dmsConnector.RegisterConnection<ConnectionInfo>(connInfo); // =>> this code cause lost session. Why???
-      }
-      else if (type == ConnectorType.WEB)
-      {
-        // register connection
-        dApp = DokmeeApplication.DokmeeWeb;
-        _dmsConnector = new DmsConnector(dApp);
-        _dmsConnector.RegisterConnection<string>(ConnectorVm.HostUrl);
-      }
-      else if (type == ConnectorType.CLOUD)
-      {
-        // register connection
-        dApp = DokmeeApplication.DokmeeCloud;
-        _dmsConnector = new DmsConnector(dApp);
-        _dmsConnector.RegisterConnection<string>("https://www.dokmeecloud.com");
-      }
+        private ConnectorModel ConnectorVm
+        {
+            get
+            {
+                if (_connectorModel == null)
+                {
+                    _connectorModel = new ConnectorModel();
+                    ConnectorVm.SelectedConnectorType = ConnectorVm.ConnectorTypes.First();
+                }
+                return _connectorModel;
+            }
+        }
 
-      var loginResult = _dmsConnector.Login(new LogonInfo
-      {
-        Username = username,
-        Password = password
-      });
+        public Task<SignInResult> Login(string username, string password, ConnectorType type)
+        {
+            DokUser user = new DokUser();
+            SignInResult result = SignInResult.Success;
 
-      return loginResult;
+            if (_dmsConnector == null)
+            {
+                CreateConnector(username, password, type);
+            }
+
+            return Task.FromResult(result);
+        }
+
+        public IEnumerable<DokmeeCabinet> GetCurrentUserCabinet(string username)
+        {
+            UserLogin user = _tempDbService.GetUserLogin(username);
+            if (user == null)
+            {
+                throw new Exception("User login is not save to database.");
+            }
+
+            if (_dmsConnector == null)
+            {
+                var cabinets = CreateConnector(user.Username, user.Password, (ConnectorType)user.Type);
+                return cabinets.DokmeeCabinets;
+            }
+
+            var loginResult = _dmsConnector.Login(new LogonInfo
+            {
+                Username = user.Username,
+                Password = user.Password
+            });
+            return loginResult.DokmeeCabinets;
+        }
+
+        public IEnumerable<DmsNode> GetCabinetContent(string cabinetId, string username)
+        {
+            if (string.IsNullOrWhiteSpace(cabinetId))
+            {
+                throw new ArgumentException("cabinetId is null or empty");
+            }
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+
+            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+            IEnumerable<DmsNode> dmsNodes = DmsConnectorProperty.GetFsNodesByName();
+            return dmsNodes;
+        }
+
+        public Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot)
+        {
+            var result = isRoot ? DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder)
+              : DmsConnectorProperty.GetFilesystem(SubjectTypes.Folder, id);
+
+            return Task.FromResult(result);
+        }
+
+        public IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            Guid id = Guid.Empty;
+            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+            {
+                DmsConnectorProperty.RegisterCabinet(id);
+                if (isFolder)
+                {
+                    results = DmsConnectorProperty.Search(SearchFieldType.TextIndex, name, "Folder Title").DmsFilesystem;
+                }
+                else
+                {
+                    try
+                    {
+                        var nodes = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Document, name);
+                        if (nodes != null && nodes.Any())
+                        {
+                            var nodeId = nodes.First()?.ID.ToString();
+                            if (!string.IsNullOrEmpty(nodeId))
+                            {
+                                results = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId).DmsFilesystem;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return results;
+        }
+
+        public void UpdateIndex(string username, Dictionary<object, object> args)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+            UserLogin user = _tempDbService.GetUserLogin(username);
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            var cabinetIdTemp = _userService.GetCurrentCabinetId();
+            Guid cabinetId = Guid.Empty;
+
+            if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
+            {
+                DmsConnectorProperty.RegisterCabinet(cabinetId);
+            }
+
+            var status = args["CustomerStatus"].ToString().Split(';');
+            if (status.Length > 0)
+            {
+                foreach (var item in status)
+                {
+                    var info = item.Split(':');
+                    if (info.Length == 2)
+                    {
+                        var nodeIdTemp = info[0].Trim();
+                        var customerStatus = info[1].Trim();
+                        Guid nodeId = Guid.Empty;
+                        if (!string.IsNullOrEmpty(nodeIdTemp) && Guid.TryParse(nodeIdTemp, out nodeId))
+                        {
+                            UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+                        }
+                    }
+                }
+            }
+        }
+
+        public string Preview(string username, string id, string cabinetId)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+
+            DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
+            //var config = Assembly.GetExecutingAssembly().Location;
+            //Process.Start(DmsConnectorProperty.ViewFile(id), config);
+            return DmsConnectorProperty.ViewFile(id);
+        }
+
+        /// <summary>
+        /// Search File System by Index
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="searchValue"></param>
+        /// <param name="cabinetId"></param>
+        /// <returns></returns>
+        public IEnumerable<DokmeeFilesystem> Search(string username, string fieldName, string searchValue, string cabinetId, SearchFieldType indexFieldType)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            Guid id = Guid.Empty;
+            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+            {
+                DmsConnectorProperty.RegisterCabinet(id);
+                var lookupResults = DmsConnectorProperty.Search(indexFieldType, searchValue, fieldName);
+                results = lookupResults.DmsFilesystem;
+            }
+            return results;
+        }
+
+        /// <summary>
+        /// Get all Cabinet Indexes
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="cabinetId"></param>
+        /// <returns></returns>
+        public IEnumerable<DokmeeIndex> GetCabinetIndexes(string username, string cabinetId)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+
+            IEnumerable<DokmeeIndex> results = new List<DokmeeIndex>();
+            Guid id = Guid.Empty;
+            if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
+            {
+                DmsConnectorProperty.RegisterCabinet(id);
+                results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);
+
+            }
+            return results;
+        }
+
+        /// <summary>
+        /// Move files to Temp Folder
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="args"></param>
+        /// <param name="tempFolder"></param>
+        public void Complete(string username, Dictionary<object, object> args, string tempFolder, string cabinetIdTemp)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new ArgumentException("username is null or empty");
+            }
+            if (string.IsNullOrWhiteSpace(tempFolder))
+            {
+                throw new ArgumentException("Temp folder is null or empty");
+            }
+            UserLogin user = _tempDbService.GetUserLogin(username);
+            IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
+            Guid cabinetId = Guid.Empty;
+            if (!string.IsNullOrEmpty(cabinetIdTemp) && Guid.TryParse(cabinetIdTemp, out cabinetId))
+            {
+                DmsConnectorProperty.RegisterCabinet(cabinetId);
+            }
+
+            var status = args["NodeId"].ToString().Split(';');
+            if (status.Length > 0)
+            {
+                foreach (var noteIdTemp in status)
+                {
+                    Guid nodeId = Guid.Empty;
+                    if (!string.IsNullOrEmpty(noteIdTemp) && Guid.TryParse(noteIdTemp, out nodeId))
+                    {
+                        var folders = DmsConnectorProperty.GetFsNodesByName(SubjectTypes.Folder, tempFolder);
+                        if (folders != null && folders.ToList().Count == 1)
+                        {
+                            var folder = folders.First();
+                            DmsConnectorProperty.MoveFile(noteIdTemp, folder.ID.ToString());
+                            //update status to Complete
+                            var customerStatus = "Complete";
+                            UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+                        }
+                    }
+                }
+            }
+        }
+
+        #region private methods
+        private void UpdateCustomerStatus(Guid cabinetId, string customerStatus, Guid nodeId)
+        {
+            var fileSystems = DmsConnectorProperty.Search(SearchFieldType.ByNodeID, nodeId.ToString()).DmsFilesystem;
+            if (fileSystems != null && fileSystems.Any())
+            {
+                var file = fileSystems.First();
+                var dokmeeIndexInfos = file.IndexFieldPairCollection;
+                if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
+                {
+                    var listIndexes = DmsConnectorProperty.GetCabinetIndexInfoByID(cabinetId);
+                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
+                    if (statusIndex != null)
+                    {
+                        statusIndex.IndexValue = customerStatus;
+                        //use for test:
+                        var dateIndexes = listIndexes.Where(x => x.ValueType == IndexValueType.DateTime).ToList();
+                        if (dateIndexes.Any())
+                        {
+                            dateIndexes.ForEach(index =>
+                            {
+                                var fileIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName == index.Name);
+                                if (fileIndex != null)
+                                {
+                                    fileIndex.IndexValue = DateTime.Now.ToString();
+                                }
+                            });
+                        }
+                        statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "CUSTOMER #");
+                        statusIndex.IndexValue = "12";
+
+                        IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
+                        {
+                            DokmeeIndexID = x.IndexFieldGuid,
+                            Name = x.IndexName,
+                            Value = x.IndexValue,
+                            SortOrder = x.SortOrder,
+                            CabinetID = cabinetId
+                        });
+                        DmsConnectorProperty.UpdateIndex(nodeId, dokmeeIndexes);
+                    }
+                }
+            }
+        }
+
+        private DokmeeCabinetResult CreateConnector(string username, string password, ConnectorType type)
+        {
+            username = username ?? _sessionHelperService.Username;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                throw new InvalideUsernameException("Username is null");
+            }
+            password = password ?? _sessionHelperService.Password;
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new InvalidePasswordException("Password is null");
+            }
+            //// initialize connector
+            DokmeeApplication dApp = DokmeeApplication.DokmeeDMS;
+
+            if (type == ConnectorType.DMS)
+            {
+                ConnectionInfo connInfo = new ConnectionInfo
+                {
+                    ServerName = ConnectorVm.Server,
+                    UserID = "sa",
+                    Password = "123456"
+                };
+
+                // register connection
+                dApp = DokmeeApplication.DokmeeDMS;
+                _dmsConnector = new DmsConnector(dApp);
+                _dmsConnector.RegisterConnection<ConnectionInfo>(connInfo); // =>> this code cause lost session. Why???
+            }
+            else if (type == ConnectorType.WEB)
+            {
+                // register connection
+                dApp = DokmeeApplication.DokmeeWeb;
+                _dmsConnector = new DmsConnector(dApp);
+                _dmsConnector.RegisterConnection<string>(ConnectorVm.HostUrl);
+            }
+            else if (type == ConnectorType.CLOUD)
+            {
+                // register connection
+                dApp = DokmeeApplication.DokmeeCloud;
+                _dmsConnector = new DmsConnector(dApp);
+                _dmsConnector.RegisterConnection<string>("https://www.dokmeecloud.com");
+            }
+
+            var loginResult = _dmsConnector.Login(new LogonInfo
+            {
+                Username = username,
+                Password = password
+            });
+
+            return loginResult;
+        }
+
+        #endregion
     }
 
-    #endregion
-  }
-
-  public class InvalideUsernameException : ArgumentException
-  {
-    public InvalideUsernameException(string mesage) : base(mesage)
+    public class InvalideUsernameException : ArgumentException
     {
+        public InvalideUsernameException(string mesage) : base(mesage)
+        {
 
+        }
     }
-  }
 
-  public class InvalidePasswordException : ArgumentException
-  {
-    public InvalidePasswordException(string mesage) : base(mesage)
+    public class InvalidePasswordException : ArgumentException
     {
+        public InvalidePasswordException(string mesage) : base(mesage)
+        {
 
+        }
     }
-  }
 }

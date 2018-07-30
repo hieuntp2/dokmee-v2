@@ -20,10 +20,10 @@
                     <div class="row">
                         <div class="form-group">
                             <div class="col-md-3">
-                                <label class="pull-right control-label">Index</label>
+                                <label class="pull-right control-label custom-control-lable">Index</label>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-control" id="search-select-index">
+                                <select class="form-control selectpicker" id="search-select-index">
                                     @foreach (var index in Model.TableTitles)
                                     {
                                         <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
@@ -36,43 +36,45 @@
                                 @foreach (var index in Model.TableTitles)
                                 {
                                     int i = Model.TableTitles.IndexOf(index);
-                                    <input type="hidden" value="@index.Id" />
-                                    <input type="hidden" value="@index.Title" />
-                                    <input type="hidden" value="@index.Order" />
-                                    <input type="hidden" value="@index.Type" />
+                                    <div class="index-select-input" id="div-search-input-@index.Id">
+                                        <input type="hidden" value="@index.Id" />
+                                        <input type="hidden" value="@index.Title" />
+                                        <input type="hidden" value="@index.Order" />
+                                        <input type="hidden" value="@index.Type" />
 
-                                    if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
-                                    {
-                                        DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                        @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
                                         {
-                                            ElementId = "search-index-" + index.Id,
-                                            ElementClass = "index-select-input",
-                                            SelectedValue = index.ValueString
-                                        };
+                                            DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                            {
+                                                ElementId = "search-index-" + index.Id,
+                                                ElementClass = "",
+                                                SelectedValue = index.ValueString
+                                            };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
-                                    }
-                                    else
-                                    {
-                                        switch (index.Type)
-                                        {
-                                            case IndexValueType.Integer:
-                                            case IndexValueType.Float:
-                                                <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
-
-                                            case IndexValueType.DateTime:
-                                                <input type="date" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
-
-                                            case IndexValueType.String:
-                                                <input type="text" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
+                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                         }
-                                    }
+                                        else
+                                        {
+                                            switch (index.Type)
+                                            {
+                                                case IndexValueType.Integer:
+                                                case IndexValueType.Float:
+                                                    <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
+                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                    break;
+
+                                                case IndexValueType.DateTime:
+                                                    <input type="date" class="form-control index-select-input" style="display: none;"
+                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                    break;
+
+                                                case IndexValueType.String:
+                                                    <input type="text" class="form-control index-select-input" style="display: none;"
+                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                    break;
+                                            }
+                                        }
+                                    </div>
                                 }
                             </div>
                             <div class="col-md-1">
@@ -99,7 +101,7 @@
                                     <!--Nothing-->
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="pull-right control-label">@index.Title</label>
+                                    <label class="pull-right control-label custom-control-lable">@index.Title</label>
                                 </div>
                                 <div class="col-md-3">
                                     <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />

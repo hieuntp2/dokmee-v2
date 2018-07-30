@@ -40,6 +40,10 @@ textarea {
     z-index: 999;
 }
 
+.custom-control-lable {
+    margin: 7px 0px;
+}
+
 /*.doc-item-type-td {
     cursor: pointer; }
 

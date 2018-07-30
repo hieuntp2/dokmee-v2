@@ -61,10 +61,13 @@
   .document-table th {
     white-space: nowrap; }
   .document-table tr td {
-    white-space: nowrap; }
+    white-space: nowrap;
+    padding: 2px !important; }
     .document-table tr td .form-control {
       padding: 3px 5px !important;
       height: auto !important; }
+    .document-table tr td .bootstrap-select .dropdown-toggle {
+      padding: 2px 2px 2px 10px !important; }
 
 .document-table-wrapper {
   overflow: auto;
@@ -75,5 +78,5 @@
   text-align: center; }
 
 .doc-item-type-td:hover {
-  background-color: #69a4e3; }
+  background-color: #e9f1f7; }
 

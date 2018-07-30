@@ -1,7 +1,12 @@
 ﻿@using Web.Models
 @model Web.ViewModels.Elements.DocumentStatusSelectModel
-
-<select class="form-control @Model.ElementClass" style="margin: auto;"
+@{
+    if (string.IsNullOrWhiteSpace(Model.SelectedValue))
+    {
+        Model.SelectedValue = string.Empty;
+    }
+}
+<select class="form-control selectpicker  @Model.ElementClass" style="margin: auto;"
         name="@Model.ElementName"
         id="@Model.ElementId">
     <option value="" @(string.IsNullOrWhiteSpace(Model.SelectedValue) ? "selected" : "") disabled="">Please select value</option>

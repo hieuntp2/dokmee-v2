@@ -30,6 +30,8 @@ function onSearchSelectIndexChange(id) {
 
     // show new index input
     $("#search-index-" + id).show();
+
+    $("#div-search-input-" + id).show();
 }
 
 function onAddSearchConditionClick() {
@@ -65,44 +67,5 @@ function setValueSearchToForm() {
     // if have value in input search, add this value to form input
     if (indexSelectValue) {
         $("#search-input-index-" + indexSelectId).val(indexSelectValue);
-    }
-}
-
-function UpdateStatusSearchIndex() {
-
-    var data = "";
-    var id = "";
-    $('#tblfileSystems > tbody  > tr').each(function () {
-        var select = $(this).find('input[type="checkbox"]:checked');
-        if (select.is(":checked")) {
-            var nodeId = $(this).attr('nodeId');
-            var status = $(this).find('#status').val()
-            if (data != "") {
-                data = data + ";";
-            }
-            data = data + nodeId + ":" + status;
-        }
-        id = $("#cabinet-id").val();
-    });
-    var args = {
-        CustomerStatus: data,
-        CabinetId: id
-    };
-    if (data != "") {
-        $(".loading-overlay").show();
-        $.ajax({
-            url: '/home/UpdateStatus',
-            type: 'post',
-            data: '{"args":' + JSON.stringify(args) + '}',
-            contentType: "application/json; charset=utf-8",
-            success: function (rs) {
-                alert("Update sucessfully!");
-                $(".loading-overlay").hide();
-            },
-            error: function (rs) {
-                alert("Update fail!");
-                $(".loading-overlay").hide();
-            }
-        });
     }
 }
