@@ -16,7 +16,7 @@ namespace DokCapture.ServicenNetFramework.Auth
 		Task<IEnumerable<DmsNode>> GetFolderContent(string username, string id, bool isRoot);
 		IEnumerable<DokmeeFilesystem> GetDokmeeFilesystems(string username, string name, bool isFolder, string cabinetId);
 		void UpdateIndex(string username, Dictionary<object, object> args);
-		void Preview(string username, string id, string cabinetId);
+    string Preview(string username, string id, string cabinetId);
 
 		/// <summary>
 		/// Search File System by Index

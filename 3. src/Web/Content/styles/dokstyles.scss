@@ -101,4 +101,13 @@
 
 .document-table-wrapper {
     overflow: auto;
+    height: 60vh;
+}
+
+.doc-item-type-td {
+    cursor: pointer;
+    text-align: center;
+}
+.doc-item-type-td:hover {
+    background-color: #69a4e3;
 }

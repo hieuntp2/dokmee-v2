@@ -159,15 +159,6 @@
                 </form>
             </div>
             <hr />
-
-            <div class="row">
-                <div class="col-md-6">
-                </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary pull-right" type="button" onclick="UpdateStatusSearchIndex()">Update</button>
-                </div>
-            </div>
-            <hr />
             <div class="box-body">
                 @{
                     DocumentItemListModel listIitems = new DocumentItemListModel()
@@ -191,6 +182,7 @@
 }
 @section scripts
 {
+    <script src="~/Scripts/home/_document-item-list.js"></script>
     <script src="~/Scripts/home/search.js"></script>
 }
 

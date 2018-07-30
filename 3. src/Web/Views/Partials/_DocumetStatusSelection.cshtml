@@ -1,9 +1,10 @@
 ﻿@using Web.Models
 @model Web.ViewModels.Elements.DocumentStatusSelectModel
-    
-<select class="form-control @Model.ElementClass" style="margin: auto;" 
+
+<select class="form-control @Model.ElementClass" style="margin: auto;"
         name="@Model.ElementName"
         id="@Model.ElementId">
+    <option value="" @(string.IsNullOrWhiteSpace(Model.SelectedValue) ? "selected" : "") disabled="">Please select value</option>
     <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.New.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.New.ToString()">
         @EDocumentStatus.New.ToString()
     </option>

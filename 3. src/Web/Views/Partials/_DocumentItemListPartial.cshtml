@@ -1,21 +1,36 @@
 ﻿@using Web.ViewModels.Elements
 @model Web.ViewModels.Elements.DocumentItemListModel
 @{
-
 }
 
 <!--
-    IMPORTANCE: Required this JS file:    
+IMPORTANCE: Required this JS file:
+<script src="~/Scripts/home/_document-item-list.js"></script>
 -->
+
+<div class="row">
+    <div class="col-md-6">
+        <strong>@Model.DocumentItems.Count() items</strong>
+    </div>
+    <div class="col-md-6">
+        <button class="btn btn-default pull-right" type="button" onclick="complete()">
+            <i class="fa fa-check"></i> Complete
+        </button>
+        <button class="btn btn-primary pull-right" type="button" onclick="UpdateStatusSearchIndex()">
+            <i class="fa fa-save"></i> Update
+        </button>
+    </div>
+</div>
+<hr />
 
 <div class="document-table-wrapper">
     <table class="table document-table" id="tblfileSystems">
         <thead>
             <tr>
-                <th style="width: 100%;">
+                <th>
                     <input type="checkbox" name="all" id="checkbox-all">
                 </th>
-                <th style="width: 100%;">EXT</th>
+                <th>EXT</th>
 
                 @foreach (var head in Model.TableTitles)
                 {
@@ -35,7 +50,7 @@
                                 <input type="checkbox" id="checkbox" class="select-doc-item">
                             </div>
                         </td>
-                        <td onclick="preview('@Model.CabinetId', '@doc.Id')">
+                        <td class="doc-item-type-td" onclick="preview('@doc.Id')"  title="Click to view">
                             @Html.Partial("/Views/Home/_itemIcon.cshtml", doc.Type)
                         </td>
 
