@@ -102,11 +102,11 @@ namespace Web.Controllers
 
                 var dokIndexs = _dokmeeService.GetCabinetIndexes(username, cabinetId).ToList();
 
-
                 IEnumerable<DokmeeFilesystem> dokmeeFilesystems = _dokmeeService.GetDokmeeFilesystems(username, name, isFolder, cabinetId);
 
                 DetailModel model = new DetailModel()
                 {
+                    FolderName = name,
                     CabinetId = cabinetId,
                     TableTitles = _mapper.Map<List<DocumentIndex>>(dokIndexs),
                     DocumentItems = _mapper.Map<List<DocumentItem>>(dokmeeFilesystems).Where(t => !t.IsInRecycleBin).ToList()

@@ -12,5 +12,6 @@ namespace Web.ViewModels.Home
 	    public List<DocumentIndex> TableTitles { get; set; } = new List<DocumentIndex>();
 	    public List<DocumentItem> DocumentItems { get; set; } = new List<DocumentItem>();
 	    public string CabinetId { get; set; }
+	    public string FolderName { get; set; }
 	}
 }
