@@ -58,25 +58,31 @@ namespace Web.Controllers
       }
     }
 
-    public ActionResult AfterMyActionResult(string username, string password, ConnectorType loginType)
-    {
-      Session["abc"] = "123";
-      _sessionHelperService.Username = username;
-      _sessionHelperService.Password = password;
-      _sessionHelperService.ConnectorType = loginType;
-      return RedirectToAction("Index");
-    }
+    //public ActionResult AfterMyActionResult(string username, string password, ConnectorType loginType)
+    //{
+    //  Session["abc"] = "123";
+    //  _sessionHelperService.Username = username;
+    //  _sessionHelperService.Password = password;
+    //  _sessionHelperService.ConnectorType = loginType;
+    //  return RedirectToAction("Index");
+    //}
 
     // dont remove cabinetId, this is save selected cabinet to temp db
-    public ActionResult CabinetDetail(string cabinetId)
+    public ActionResult CabinetDetail()
     {
-      // update user select cabinet
-      _userService.UpdateCabinet(cabinetId);
+      string cabinetId = _userService.GetCurrentCabinetId();
       string username = User.Identity.GetUserId();
       IEnumerable<DmsNode> cabinetContent = _dokmeeService.GetCabinetContent(cabinetId, username);
       IEnumerable<Node> nodes = _mapper.Map<IEnumerable<Node>>(cabinetContent);
       ViewBag.cabinetId = cabinetId;
       return View(nodes);
+    }
+
+    public ActionResult UpdateCabinet(string cabinetId)
+    {
+      // update user select cabinet
+      _userService.UpdateCabinet(cabinetId);
+      return RedirectToAction("Search");
     }
 
     public ActionResult Details(string dmstype, string name)
@@ -158,8 +164,6 @@ namespace Web.Controllers
     {
       string username = _userService.GetUserId();
       string cabinetId = _userService.GetCurrentCabinetId();
-
-
 
       List<DocumentIndex> conditions =
         model.TableTitles.Where(t => !string.IsNullOrWhiteSpace(t.ValueString)).ToList();

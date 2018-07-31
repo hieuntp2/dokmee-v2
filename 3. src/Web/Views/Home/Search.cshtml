@@ -1,9 +1,10 @@
 ﻿@using System.Activities.Statements
 @using Dokmee.Dms.Advanced.WebAccess.Data
+@using Services
 @using Web.ViewModels.Elements
 @model Web.ViewModels.Home.SearchModel
 @{
-    ViewBag.Title = "Search";
+    ViewBag.Title = "Search File";
 }
 
 @Html.Partial("_loadingOverlay")
@@ -12,10 +13,9 @@
     <div class="col-md-12">
         <div class="my-box box-header-boder">
             <div class="box-header">
-                <h3>Search</h3>
                 <form action="Search" method="post" id="search-form">
                     @Html.HiddenFor(model => model.CabinetId)
-
+                    <h3>Search Files</h3>
                     <!-- Start Select Index -->
                     <div class="row">
                         <div class="form-group">
@@ -42,7 +42,7 @@
                                         <input type="hidden" value="@index.Order" />
                                         <input type="hidden" value="@index.Type" />
 
-                                        @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
+                                        @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
                                         {
                                             DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
                                             {
@@ -109,14 +109,14 @@
                                     <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
                                     <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
 
-                                    @if (string.Equals(index.Title.ToUpper(), "DOCUMENT STATUS"))
+                                    @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
                                     {
                                         DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
                                         {
                                             ElementId = "search-input-index-" + index.Id,
                                             ElementName = "TableTitles[" + i + "].Value",
                                             SelectedValue = index.ValueString,
-
+                                            ElementClass = "search-input-value"
                                         };
 
                                         @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
@@ -127,19 +127,19 @@
                                         {
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
-                                                <input type="number" class="form-control" step="0.00001"
+                                                <input type="number" class="form-control search-input-value" step="0.00001"
                                                        value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
                                                        name="TableTitles[@i].Value" />
                                                 break;
 
                                             case IndexValueType.DateTime:
-                                                <input type="date" class="form-control"
+                                                <input type="date" class="form-control search-input-value"
                                                        value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
                                                        name="TableTitles[@i].Value" />
                                                 break;
 
                                             case IndexValueType.String:
-                                                <input type="text" class="form-control"
+                                                <input type="text" class="form-control search-input-value"
                                                        value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
                                                        name="TableTitles[@i].Value" />
                                                 break;

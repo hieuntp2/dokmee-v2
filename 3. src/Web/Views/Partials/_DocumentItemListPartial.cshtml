@@ -1,6 +1,9 @@
-﻿@using Web.ViewModels.Elements
+﻿@using Services
+@using Web.Models
+@using Web.ViewModels.Elements
 @model Web.ViewModels.Elements.DocumentItemListModel
 @{
+
 }
 
 <!--
@@ -9,7 +12,6 @@ IMPORTANCE: Required this JS file:
 -->
 
 <div class="row">
-    
     <div class="col-md-2">
         <button class="btn btn-primary" type="button" onclick="UpdateStatusSearchIndex()">
             <i class="fa fa-save"></i> Update
@@ -19,14 +21,12 @@ IMPORTANCE: Required this JS file:
     <div class="col-md-4">
         <div class="input-group">
             <span class="input-group-btn">
-                <button class="btn btn-default" onclick="updateAllStatus()">Update all</button>
+                <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status</button>
             </span>
             @{
                 DocumentStatusSelectModel modelSelectAll = new DocumentStatusSelectModel()
                 {
                     ElementId = "update-all-status-value",
-                    //ElementClass = "index-select-input",
-                    //SelectedValue = index.ValueString
                 };
 
                 @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", modelSelectAll)
@@ -37,88 +37,86 @@ IMPORTANCE: Required this JS file:
         <button class="btn btn-default" type="button" onclick="complete()">
             <i class="fa fa-check"></i> Complete
         </button>
-
-
     </div>
 </div>
 <hr />
 
 <div class="document-table-wrapper">
-  
+
     <table class="table document-table table-hover" id="tblfileSystems">
         <thead>
-        <tr>
-            <th style="text-align: center;">
-                <input type="checkbox" name="all" id="checkbox-all">
-            </th>
-            <th>EXT</th>
+            <tr>
+                <th style="text-align: center;">
+                    <input type="checkbox" name="all" id="checkbox-all">
+                </th>
+                <th>EXT</th>
 
-            @foreach (var head in Model.TableTitles)
-            {
-                <th style="width: 100%;">@head.Title</th>
-            }
-        </tr>
+                @foreach (var head in Model.TableTitles)
+                {
+                    <th style="width: 100%;">@head.Title</th>
+                }
+            </tr>
         </thead>
 
         <tbody>
-        @if (Model.DocumentItems.Any())
-        {
-            foreach (var doc in Model.DocumentItems)
+            @if (Model.DocumentItems.Any())
             {
-                <tr nodeId="@doc.Id">
-                    <td style="    text-align: center;">
-                        <div class="icheckbox">
-                            <input type="checkbox" id="checkbox" class="select-doc-item">
-                        </div>
-                    </td>
-                    <td class="doc-item-type-td" onclick="preview('@doc.Id')" title="Click to view">
-                        @Html.Partial("/Views/Home/_itemIcon.cshtml", doc.Type)
-                    </td>
+                foreach (var doc in Model.DocumentItems)
+                {
+                    <tr nodeId="@doc.Id">
+                        <td style="    text-align: center;">
+                            <div class="icheckbox">
+                                <input type="checkbox" id="checkbox" class="select-doc-item">
+                            </div>
+                        </td>
+                        <td class="doc-item-type-td" onclick="preview('@doc.Id')" title="Click to view">
+                            @Html.Partial("/Views/Home/_itemIcon.cshtml", doc.Type)
+                        </td>
 
-                    @if (doc.Indexs.Any())
-                    {
-                        foreach (var index in doc.Indexs)
+                        @if (doc.Indexs.Any())
                         {
-                            if (index.Title.ToUpper() == "DOCUMENT STATUS")
+                            foreach (var index in doc.Indexs)
                             {
-                                if (string.IsNullOrEmpty(index.ValueString))
+                                if (index.Title.ToUpper() == StaticStringName.DOCUMENT_STATUS.ToUpper())
                                 {
-                                    index.ValueString = "New";
-                                }
-                                string value = index.ValueString;
-                                <td>
-                                    @{
-                                        DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
-                                        {
-                                            ElementId = "status",
-                                            SelectedValue = index.ValueString,
-
-                                        };
-
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                    if (string.IsNullOrEmpty(index.ValueString))
+                                    {
+                                        index.ValueString = EDocumentStatus.New.ToString();
                                     }
-                                </td>
+                                    string value = index.ValueString;
+                                    <td>
+                                        @{
+                                            DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
+                                            {
+                                                ElementId = "status",
+                                                SelectedValue = index.ValueString,
+
+                                            };
+
+                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        }
+                                    </td>
+
+                                }
+                                else
+                                {
+                                    <td>@index.Value</td>
+                                }
 
                             }
-                            else
-                            {
-                                <td>@index.Value</td>
-                            }
-
                         }
-                    }
 
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="@(2 + Model.TableTitles.Count())">
+                        <strong>No document found!</strong>
+                    </td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="@(2 + Model.TableTitles.Count())">
-                    <strong>No document found!</strong>
-                </td>
-            </tr>
-        }
         </tbody>
     </table>
     <small>@Model.DocumentItems.Count() items</small>

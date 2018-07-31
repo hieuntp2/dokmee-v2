@@ -78,5 +78,16 @@
   text-align: center; }
 
 .doc-item-type-td:hover {
-  background-color: #e9f1f7; }
+  background-color: #abd3f1; }
+
+.swal2-popup {
+  font-size: 1.6rem !important; }
+
+.swal2-icon {
+  width: 5em !important;
+  height: 5em !important;
+  border-width: .25em !important; }
+
+.swal2-icon.swal2-warning {
+  font-size: inherit !important; }
 
