@@ -1,18 +1,14 @@
 ﻿@model Web.ViewModels.Home.IndexModel
-
 @{
     ViewBag.Title = "Home Page";
 }
 <section>
-
     <div class="col-md-6 col-md-offset-3" style="text-align: center;top: 10vh;">
-
         <div class="my-box">
             <div class="box-header">
                 <h3 class="text-center">Select Cabinet</h3>
                 <hr />
             </div>
-
             <div class="box-body">
                 <select class="form-control" style="margin: auto;" id="select-cabinet">
                     @foreach (var item in Model.Cabinets)
@@ -24,20 +20,18 @@
                 </select>
                 <br />
             </div>
-
             <div class="box-footer">
                 <button class="btn btn-primary" type="button" onclick="openCabinet()">Open</button>
             </div>
         </div>
-
     </div>
 </section>
-
 @section scripts
 {
     <script>
         function openCabinet() {
-            window.location.href = "/home/UpdateCabinet?cabinetId=" + $("#select-cabinet").val();
+            var id = $("#select-cabinet").val();
+            window.location.href = "@Url.Action( "UpdateCabinet", "Home",new { cabinetId="id" })".replace("id", id);
         }
     </script>
 }

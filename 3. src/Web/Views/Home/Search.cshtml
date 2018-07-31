@@ -6,9 +6,11 @@
 @{
     ViewBag.Title = "Search File";
 }
-
 @Html.Partial("_loadingOverlay")
 <input type="hidden" id="cabinet-id" value="@Model.CabinetId" />
+@Html.Hidden("updatestatus", Url.Action("UpdateStatus", "Home"))
+@Html.Hidden("complete", Url.Action("Complete", "Home"))
+@Html.Hidden("preview", Url.Action("Preview", "Home"))
 <section>
     <div class="col-md-12">
         <div class="my-box box-header-boder">
@@ -27,7 +29,7 @@
                                     @foreach (var index in Model.TableTitles)
                                     {
                                         <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
-                                            @index.Title
+                                            @index.Title.ToUpper()
                                         </option>
                                     }
                                 </select>
@@ -41,7 +43,6 @@
                                         <input type="hidden" value="@index.Title" />
                                         <input type="hidden" value="@index.Order" />
                                         <input type="hidden" value="@index.Type" />
-
                                         @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
                                         {
                                             DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
@@ -51,7 +52,7 @@
                                                 SelectedValue = index.ValueString
                                             };
 
-                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                            @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                         }
                                         else
                                         {
@@ -60,17 +61,17 @@
                                                 case IndexValueType.Integer:
                                                 case IndexValueType.Float:
                                                     <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
-                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                           id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                     break;
 
                                                 case IndexValueType.DateTime:
                                                     <input type="date" class="form-control index-select-input" style="display: none;"
-                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                           id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                     break;
 
                                                 case IndexValueType.String:
                                                     <input type="text" class="form-control index-select-input" style="display: none;"
-                                                           id="search-index-@index.Id" placeholder="@index.Title" />
+                                                           id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                     break;
                                             }
                                         }
@@ -91,7 +92,6 @@
                         </div>
                     </div>
                     <!-- End Select Index -->
-
                     @foreach (var index in Model.TableTitles)
                     {
                         int i = Model.TableTitles.IndexOf(index);
@@ -101,14 +101,13 @@
                                     <!--Nothing-->
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="pull-right control-label custom-control-lable">@index.Title</label>
+                                    <label class="pull-right control-label custom-control-lable">@index.Title.ToUpper()</label>
                                 </div>
                                 <div class="col-md-3">
                                     <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
                                     <input type="hidden" name="TableTitles[@i].Title" value="@index.Title" />
                                     <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
                                     <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
-
                                     @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
                                     {
                                         DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
@@ -119,7 +118,7 @@
                                             ElementClass = "search-input-value"
                                         };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                     }
                                     else
                                     {
@@ -152,7 +151,6 @@
                                     </button>
                                 </div>
                                 <div class="col-md-2">
-
                                 </div>
                                 <br />
                             </div>
@@ -169,23 +167,19 @@
                         TableTitles = Model.TableTitles,
                         CabinetId = Model.CabinetId
                     };
-                    Html.RenderPartial("/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
+                    Html.RenderPartial("~/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
                 }
             </div>
             <div class="box-footer">
-
             </div>
         </div>
     </div>
 </section>
-
 @section styles{
-
 }
 @section scripts
 {
     <script src="~/Scripts/home/_document-item-list.js"></script>
     <script src="~/Scripts/home/search.js"></script>
 }
-
 
