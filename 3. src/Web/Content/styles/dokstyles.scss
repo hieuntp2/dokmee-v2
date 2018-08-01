@@ -83,8 +83,14 @@
     width: 100%;
     height: auto;
 
+    thead {
+        border: 1px solid #dddddd;
+    }
+
     th {
         white-space: nowrap;
+        color: #3288e6;
+        border: 1px solid #dddddd;
     }
 
     tr {
@@ -130,4 +136,10 @@
 
 .swal2-icon.swal2-warning {
     font-size: inherit !important;
+}
+
+.condition-input-div {
+    max-height: 30vh;
+    overflow: auto;
+
 }

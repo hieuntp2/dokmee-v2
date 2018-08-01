@@ -15,7 +15,7 @@ $(document).ready(function () {
 
 
   $('#search-form').submit(function () {
-  
+
     setValueSearchToForm();
 
     // validate input
@@ -54,7 +54,9 @@ function onSearchSelectIndexChange(id) {
 }
 
 function onAddSearchConditionClick() {
-  setValueSearchToForm();
+  if (!setValueSearchToForm()) {
+    return;
+  }
 
   // get selected value
   var id = getSelectIndexTitleId();
@@ -86,5 +88,8 @@ function setValueSearchToForm() {
   // if have value in input search, add this value to form input
   if (indexSelectValue) {
     $("#search-input-index-" + indexSelectId).val(indexSelectValue);
+    $("#search-input-index-" + indexSelectId).selectpicker('val', indexSelectValue);
+    return true;
   }
+  return false;
 }

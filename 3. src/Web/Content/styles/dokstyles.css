@@ -58,8 +58,12 @@
 .document-table {
   width: 100%;
   height: auto; }
+  .document-table thead {
+    border: 1px solid #dddddd; }
   .document-table th {
-    white-space: nowrap; }
+    white-space: nowrap;
+    color: #3288e6;
+    border: 1px solid #dddddd; }
   .document-table tr td {
     white-space: nowrap;
     padding: 2px !important; }
@@ -90,4 +94,8 @@
 
 .swal2-icon.swal2-warning {
   font-size: inherit !important; }
+
+.condition-input-div {
+  max-height: 30vh;
+  overflow: auto; }
 

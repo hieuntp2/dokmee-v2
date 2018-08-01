@@ -12,13 +12,13 @@ IMPORTANCE: Required this JS file:
 -->
 
 <div class="row">
-    <div class="col-md-2">
+    <div class="col-sm-2">
         <button class="btn btn-primary" type="button" onclick="UpdateStatusSearchIndex()">
             <i class="fa fa-save"></i> Update
         </button>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-sm-4">
         <div class="input-group">
             <span class="input-group-btn">
                 <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status</button>
@@ -29,12 +29,12 @@ IMPORTANCE: Required this JS file:
                     ElementId = "update-all-status-value",
                 };
 
-                @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", modelSelectAll)
+                @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", modelSelectAll)
             }
         </div><!-- /input-group -->
     </div>
-    <div class="col-md-6">
-        <button class="btn btn-default" type="button" onclick="complete()">
+    <div class="col-sm-6">
+        <button class="btn btn-default pull-right" type="button" onclick="complete()">
             <i class="fa fa-check"></i> Complete
         </button>
     </div>
@@ -53,7 +53,7 @@ IMPORTANCE: Required this JS file:
 
                 @foreach (var head in Model.TableTitles)
                 {
-                    <th style="width: 100%;">@head.Title.ToUpper()</th>
+                    <th style="width: 100%;">@head.Title</th>
                 }
             </tr>
         </thead>
@@ -70,7 +70,7 @@ IMPORTANCE: Required this JS file:
                             </div>
                         </td>
                         <td class="doc-item-type-td" onclick="preview('@doc.Id')" title="Click to view">
-                            @Html.Partial("~/Views/Home/_itemIcon.cshtml", doc.Type)
+                            @Html.Partial("/Views/Home/_itemIcon.cshtml", doc.Type)
                         </td>
 
                         @if (doc.Indexs.Any())
@@ -93,7 +93,7 @@ IMPORTANCE: Required this JS file:
 
                                             };
 
-                                            @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                            @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                         }
                                     </td>
 
