@@ -506,6 +506,7 @@
     </None>
     <Content Include="Content\plugins\bootstrap-select\css\bootstrap-select.css.map" />
     <Content Include="Content\plugins\bootstrap-select\js\bootstrap-select.js.map" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\home\_document-item-list.js" />
     <Content Include="Scripts\home\detail.js" />
