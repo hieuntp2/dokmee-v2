@@ -86,6 +86,8 @@
     <Compile Include="StaticStringName.cs" />
     <Compile Include="TempDbService\ITempDbService.cs" />
     <Compile Include="TempDbService\TempDbService.cs" />
+    <Compile Include="UserSerivce\Exceptions\CabinetNotSelectedException.cs" />
+    <Compile Include="TempDbService\Exceptions\UserNotFoundInTempDbException.cs" />
     <Compile Include="UserSerivce\IUserService.cs" />
     <Compile Include="UserSerivce\UserService.cs" />
   </ItemGroup>
