@@ -233,7 +233,11 @@ namespace Services.AuthService
             if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
             {
                 DmsConnectorProperty.RegisterCabinet(id);
-                var lookupResults = DmsConnectorProperty.Search(indexFieldType, searchValue, fieldName);
+				if (DateTime.TryParse(searchValue, out DateTime conditionIndexValue))
+				{
+					searchValue = conditionIndexValue.ToString("yyyy/MMM/dd");
+				}
+				var lookupResults = DmsConnectorProperty.Search(indexFieldType, searchValue, fieldName);
                 results = lookupResults.DmsFilesystem;
             }
             return results;

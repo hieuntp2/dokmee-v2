@@ -26,7 +26,7 @@
                                 @foreach (var index in Model.TableTitles)
                                 {
                                     <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
-                                        @index.Title
+                                        @index.Title.ToUpper()
                                     </option>
                                 }
                             </select>
@@ -50,7 +50,7 @@
                                             SelectedValue = index.ValueString
                                         };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                     }
                                     else
                                     {
@@ -59,17 +59,17 @@
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
                                                 <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                 break;
 
                                             case IndexValueType.DateTime:
                                                 <input type="date" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                 break;
 
                                             case IndexValueType.String:
                                                 <input type="text" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
+                                                       id="search-index-@index.Id" placeholder="@index.Title.ToUpper()" />
                                                 break;
                                         }
                                     }
@@ -88,7 +88,7 @@
                         </div>
                         <br />
                     </div>
-                   
+
                 </div>
                 <!-- End Select Index -->
 
@@ -120,7 +120,7 @@
                                             ElementClass = "search-input-value"
                                         };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
                                     }
                                     else
                                     {
@@ -171,7 +171,7 @@
                     TableTitles = Model.TableTitles,
                     CabinetId = Model.CabinetId
                 };
-                Html.RenderPartial("/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
+                Html.RenderPartial("~/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
             }
         </div>
         <div class="box-footer">

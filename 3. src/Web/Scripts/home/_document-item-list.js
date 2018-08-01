@@ -20,7 +20,8 @@ function preview(id) {
         return;
     }
     $(".loading-overlay").show();
-    var url = $("#complete").val() + '?id=' + id;
+    var url = $("#preview").val() + '?id=' + id;
+    console.log(url);
     $.ajax({
         url: url,
         type: 'post',
@@ -28,6 +29,7 @@ function preview(id) {
         success: function (rs) {
             $(".loading-overlay").hide();
             if (!rs.isError) {
+                console.log(rs.url);
                 var win = window.open(rs.url, '_blank');
                 if (win) {
                     //Browser has allowed it to be opened
