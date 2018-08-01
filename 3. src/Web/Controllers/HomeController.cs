@@ -164,7 +164,6 @@ namespace Web.Controllers
     [HttpGet]
     public ActionResult Search()
     {
-      throw new CabinetNotSelectedException();
       string username = _userService.GetUserId();
       string cabinetId = _userService.GetCurrentCabinetId();
       var dokIndexs = _dokmeeService.GetCabinetIndexes(username, cabinetId);
