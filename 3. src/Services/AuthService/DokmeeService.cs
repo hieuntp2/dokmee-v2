@@ -320,22 +320,6 @@ namespace Services.AuthService
                     if (statusIndex != null)
                     {
                         statusIndex.IndexValue = customerStatus;
-                        //use for test:
-                        var dateIndexes = listIndexes.Where(x => x.ValueType == IndexValueType.DateTime).ToList();
-                        if (dateIndexes.Any())
-                        {
-                            dateIndexes.ForEach(index =>
-                            {
-                                var fileIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName == index.Name);
-                                if (fileIndex != null)
-                                {
-                                    fileIndex.IndexValue = DateTime.Now.ToString();
-                                }
-                            });
-                        }
-                        statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "CUSTOMER #");
-                        statusIndex.IndexValue = "12";
-
                         IEnumerable<DokmeeIndex> dokmeeIndexes = dokmeeIndexInfos.Select(x => new DokmeeIndex
                         {
                             DokmeeIndexID = x.IndexFieldGuid,
