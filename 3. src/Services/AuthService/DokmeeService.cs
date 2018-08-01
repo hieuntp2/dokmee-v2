@@ -14,6 +14,8 @@ using Services.TempDbService;
 using Dokmee.Dms.Advanced.WebAccess.Data;
 using System.Reflection;
 using System.Diagnostics;
+using Services.ConfiguraionService;
+using Services.TempDbService.Exceptions;
 using Services.UserSerivce;
 
 namespace Services.AuthService
@@ -25,6 +27,7 @@ namespace Services.AuthService
         private ConnectorModel _connectorModel;
         private ITempDbService _tempDbService;
         private IUserService _userService;
+        private IConfigurationService _configurationService;
 
         public DmsConnector DmsConnectorProperty
         {
@@ -45,11 +48,12 @@ namespace Services.AuthService
             set { _dmsConnector = value; }
         }
 
-        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService)
+        public DokmeeService(ISessionHelperService sessionHelperService, ITempDbService tempDbService, IUserService userService, IConfigurationService configurationService)
         {
             _sessionHelperService = sessionHelperService;
             _tempDbService = tempDbService;
             _userService = userService;
+            _configurationService = configurationService;
         }
 
         private ConnectorModel ConnectorVm
@@ -83,7 +87,7 @@ namespace Services.AuthService
             UserLogin user = _tempDbService.GetUserLogin(username);
             if (user == null)
             {
-                throw new Exception("User login is not save to database.");
+                throw new UserNotFoundInTempDbException("User login is not save to database.");
             }
 
             if (_dmsConnector == null)
@@ -353,9 +357,9 @@ namespace Services.AuthService
             {
                 ConnectionInfo connInfo = new ConnectionInfo
                 {
-                    ServerName = ConnectorVm.Server,
-                    UserID = "sa",
-                    Password = "123456"
+                    ServerName = _configurationService.SQLServerName,
+                    UserID = _configurationService.DbUsername,
+                    Password = _configurationService.DbPassword
                 };
 
                 // register connection
@@ -375,7 +379,7 @@ namespace Services.AuthService
                 // register connection
                 dApp = DokmeeApplication.DokmeeCloud;
                 _dmsConnector = new DmsConnector(dApp);
-                _dmsConnector.RegisterConnection<string>("https://www.dokmeecloud.com");
+                _dmsConnector.RegisterConnection<string>(_configurationService.DokmeeCloudUrl);
             }
 
             var loginResult = _dmsConnector.Login(new LogonInfo
