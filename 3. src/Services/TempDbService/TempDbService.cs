@@ -50,10 +50,10 @@ namespace Services.TempDbService
     {
       var result = _dbContext.UserLogins.SingleOrDefault(t => t.Username == username);
 
-      if (result == null)
-      {
-        throw new UserNotFoundInTempDbException("User should login first. No user infor is store");
-      }
+      //if (result == null)
+      //{
+      //  throw new UserNotFoundInTempDbException("User should login first. No user infor is store");
+      //}
       return result;
     }
 

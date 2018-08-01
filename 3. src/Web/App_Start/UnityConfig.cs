@@ -14,6 +14,7 @@ using Web.App_Start;
 using Services.TempDbService;
 using Services.UserSerivce;
 using System.Security.Principal;
+using Services.ConfiguraionService;
 
 namespace Web
 {
@@ -68,6 +69,8 @@ namespace Web
 
             container.RegisterType<IDokmeeService, DokmeeService>();
             container.RegisterType<ITempDbService, TempDbService>();
+            container.RegisterType<IConfigurationService, ConfigurationService>();
+            
             container.RegisterType<ISessionHelperService, SessionHelperService>();
             container.RegisterInstance<IMapper>(MappingProfile.InitializeAutoMapper().CreateMapper());
             

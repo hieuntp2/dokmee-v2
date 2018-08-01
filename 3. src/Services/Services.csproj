@@ -81,6 +81,8 @@
     <Compile Include="AuthService\Models\Node.cs" />
     <Compile Include="AuthService\Models\SignInResult.cs" />
     <Compile Include="AuthService\Models\Visibility.cs" />
+    <Compile Include="ConfiguraionService\ConfigurationService.cs" />
+    <Compile Include="ConfiguraionService\IConfigurationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionHelperService\ISessionHelperService.cs" />
     <Compile Include="SessionHelperService\SessionHelperService.cs" />
