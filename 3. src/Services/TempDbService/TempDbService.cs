@@ -3,6 +3,7 @@ using Repositories;
 using Services.AuthService.Models;
 using System;
 using System.Linq;
+using Services.TempDbService.Exceptions;
 using Services.UserSerivce.Exceptions;
 
 namespace Services.TempDbService
@@ -51,7 +52,7 @@ namespace Services.TempDbService
 
       if (result == null)
       {
-        throw new UserNotFoundInTempDb("User should login first. No user infor is store");
+        throw new UserNotFoundInTempDbException("User should login first. No user infor is store");
       }
       return result;
     }
