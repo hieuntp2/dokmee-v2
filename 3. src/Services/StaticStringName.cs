@@ -10,5 +10,6 @@ namespace Services
   public static class StaticStringName
   {
     public static string DOCUMENT_STATUS = "Document status";
+      public static string RECYCLE_BIN = "RECYCLE BIN";
   }
 }

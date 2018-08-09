@@ -15,24 +15,32 @@ IMPORTANCE: Required this JS file:
 @Html.Hidden("preview", Url.Action("Preview", "Home"))
 <div class="row">
     <div class="col-sm-2">
-        <button class="btn btn-primary" type="button" onclick="UpdateStatusSearchIndex()">
-            <i class="fa fa-save"></i> Update
-        </button>
+
+        @if (Model.HaveDocumentStatusTitle)
+        {
+            <button class="btn btn-primary" type="button" onclick="UpdateStatusSearchIndex()">
+                <i class="fa fa-save"></i> Update
+            </button>
+        }
+
     </div>
     <div class="col-sm-4">
-        <div class="input-group">
-            <span class="input-group-btn">
-                <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status</button>
-            </span>
-            @{
-                DocumentStatusSelectModel modelSelectAll = new DocumentStatusSelectModel()
-                {
-                    ElementId = "update-all-status-value",
-                };
+        @if (Model.HaveDocumentStatusTitle)
+        {
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status</button>
+                </span>
+                @{
+                    DocumentStatusSelectModel modelSelectAll = new DocumentStatusSelectModel()
+                    {
+                        ElementId = "update-all-status-value",
+                    };
 
-                @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", modelSelectAll)
-            }
-        </div><!-- /input-group -->
+                    @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", modelSelectAll)
+                }
+            </div><!-- /input-group -->
+        }
     </div>
     <div class="col-sm-6">
         <button class="btn btn-default pull-right" type="button" onclick="complete()">
@@ -61,7 +69,7 @@ IMPORTANCE: Required this JS file:
                 foreach (var doc in Model.DocumentItems)
                 {
                     <tr nodeId="@doc.Id">
-                        <td style="    text-align: center;">
+                        <td style="text-align: center;">
                             <div class="icheckbox">
                                 <input type="checkbox" id="checkbox" class="select-doc-item">
                             </div>
@@ -108,7 +116,12 @@ IMPORTANCE: Required this JS file:
             {
                 <tr>
                     <td colspan="@(2 + Model.TableTitles.Count())">
-                        <strong>No document found!</strong>
+
+                        @if (Model.HaveSearchValue)
+                        {
+                            <strong>No document found!</strong>
+                        }
+
                     </td>
                 </tr>
             }

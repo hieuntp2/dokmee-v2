@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Services;
 using Web.Models;
 using Web.ViewModels.Home;
 
@@ -46,7 +47,6 @@ namespace Web.Controllers
 
             try
             {
-                throw new Exception("Some message");
                 IndexModel model = new IndexModel();
                 IEnumerable<DokmeeCabinet> dokmeeCabinets = _dokmeeService.GetCurrentUserCabinet(User.Identity.GetUserId());
                 model.Cabinets = _mapper.Map<IEnumerable<Cabinet>>(dokmeeCabinets);
@@ -190,16 +190,14 @@ namespace Web.Controllers
             string username = _userService.GetUserId();
             string cabinetId = _userService.GetCurrentCabinetId();
 
-            List<DocumentIndex> conditions =
-              model.TableTitles.Where(t => !string.IsNullOrWhiteSpace(t.ValueString)).ToList();
 
-            if (!conditions.Any())
+            if (!model.HaveSearchValue)
             {
                 return View(model);
             }
 
             // search first condition
-            var firstCondition = conditions.First();
+            var firstCondition = model.Conditions.First();
 
             SearchFieldType searchFieldType;
             switch (firstCondition.Type)
@@ -218,13 +216,13 @@ namespace Web.Controllers
             var dokResult = _dokmeeService.Search(username, firstCondition.Title, firstCondition.ValueString, cabinetId, searchFieldType).ToList();
 
             //remove file in Recycle bin
-            dokResult = dokResult?.Where(x => x.FullPath != null && !x.FullPath.ToUpper().Contains("RECYCLE BIN")).ToList();
+            dokResult = dokResult?.Where(x => x.FullPath != null && !x.FullPath.ToUpper().Contains(StaticStringName.RECYCLE_BIN)).ToList();
 
             bool haveDocumentStausNew = model.TableTitles.Any(t =>
-              t.Title.ToUpper().Equals("DOCUMENT STATUS") && t.ValueString.Equals(EDocumentStatus.New.ToString()));
+              t.Title.ToUpper().Equals(StaticStringName.DOCUMENT_STATUS) && t.ValueString.Equals(EDocumentStatus.New.ToString()));
             if (haveDocumentStausNew)
             {
-                DocumentIndex docStatus = model.TableTitles.Single(t => t.Title.ToUpper().Equals("DOCUMENT STATUS"));
+                DocumentIndex docStatus = model.TableTitles.Single(t => t.Title.ToUpper().Equals(StaticStringName.DOCUMENT_STATUS));
                 dokResult.AddRange(_dokmeeService.Search(username, docStatus.Title, string.Empty, cabinetId, searchFieldType).ToList());
             }
             model.DocumentItems = _mapper.Map<List<DocumentItem>>(dokResult).Where(t => !t.IsInRecycleBin).ToList();
@@ -258,7 +256,7 @@ namespace Web.Controllers
             if (filterContext.Exception is CabinetNotSelectedException)
             {
                 // Switch to an error view
-                filterContext.Result = RedirectToAction("Index");   
+                filterContext.Result = RedirectToAction("Index");
                 filterContext.ExceptionHandled = true;
                 return;
             }
@@ -270,10 +268,13 @@ namespace Web.Controllers
                 filterContext.ExceptionHandled = true;
                 return;
             }
-
-            filterContext.ExceptionHandled = true;
-
+#if DEBUG
+#else
+   filterContext.ExceptionHandled = true;
             filterContext.Result = this.RedirectToAction("Exception", "Home"); // Redirect to error page.
+#endif
+
+
 
             base.OnException(filterContext);
         }

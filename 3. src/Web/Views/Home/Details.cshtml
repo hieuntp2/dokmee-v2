@@ -1,4 +1,5 @@
-﻿@model Web.ViewModels.Home.DetailModel
+﻿@using Services
+@model Web.ViewModels.Home.DetailModel
 @{
     ViewBag.Title = "File Details";
     var results = Model?.dokmeeFilesystems;
@@ -80,7 +81,7 @@
                                         var completeSelected = "";
 
                                         var header = results.First().IndexFieldPairCollection[i].IndexName;
-                                        if (header.ToUpper() == "DOCUMENT STATUS")
+                                        if (header.ToUpper() == StaticStringName.DOCUMENT_STATUS)
                                         {
                                             if (string.IsNullOrEmpty(data))
                                             {
@@ -118,14 +119,14 @@
                 </table>
             </div>
             <div class="box-footer">
-             
+
             </div>
         </div>
     </div>
 </section>
 
 @section styles{
-  
+
 }
 @section scripts
 {
