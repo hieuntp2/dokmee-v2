@@ -29,8 +29,8 @@ namespace Web.Controllers
         private readonly IMapper _mapper;
         private readonly ISessionHelperService _sessionHelperService;
         private readonly IUserService _userService;
-
-        private IConfigurationService _configurationService;
+        private readonly IConfigurationService _configurationService;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(HomeController));
 
         public HomeController(IDokmeeService dokmeeService, IMapper mapper, ISessionHelperService sessionHelperService, IUserService userService, IConfigurationService configurationService)
         {
@@ -43,8 +43,10 @@ namespace Web.Controllers
 
         public ActionResult Index()
         {
+
             try
             {
+                throw new Exception("Some message");
                 IndexModel model = new IndexModel();
                 IEnumerable<DokmeeCabinet> dokmeeCabinets = _dokmeeService.GetCurrentUserCabinet(User.Identity.GetUserId());
                 model.Cabinets = _mapper.Map<IEnumerable<Cabinet>>(dokmeeCabinets);
@@ -252,10 +254,11 @@ namespace Web.Controllers
 
         protected override void OnException(ExceptionContext filterContext)
         {
+            log.Error(filterContext.Exception);
             if (filterContext.Exception is CabinetNotSelectedException)
             {
                 // Switch to an error view
-                filterContext.Result = RedirectToAction("Index");
+                filterContext.Result = RedirectToAction("Index");   
                 filterContext.ExceptionHandled = true;
                 return;
             }
@@ -268,10 +271,16 @@ namespace Web.Controllers
                 return;
             }
 
+            filterContext.ExceptionHandled = true;
+
+            filterContext.Result = this.RedirectToAction("Exception", "Home"); // Redirect to error page.
+
             base.OnException(filterContext);
-            //ViewResult view = new ViewResult {ViewName = "Error"};
-            //filterContext.Result = view;
-            //filterContext.ExceptionHandled = true;
+        }
+
+        public ActionResult Exception()
+        {
+            return View();
         }
     }
 }

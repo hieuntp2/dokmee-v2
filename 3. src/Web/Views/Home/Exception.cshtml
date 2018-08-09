@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Exception";
+}
+
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <h2 class="text-center">
+            Opps, something happens.
+        </h2>
+
+        <img src="~/Content/imgs/exceptions.jpg" style="max-width: 50%;text-align: center;margin: 0 auto;display: -webkit-box;" />
+
+        <p class="text-center">
+            If problems repeat, please send us log file to duc@vsource-software.com.
+            @*<a data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" href="#">
+                    Show detail
+                </a>*@
+        </p>
+        <p class="text-center">
+            @Html.ActionLink("Click here to back to Search page", "Search")
+        </p>
+        @*<div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    @Model.Message
+                </div>
+                <hr />
+                <strong>Source:</strong> @Model.Source<br />
+                <strong>Detail: </strong> @Model.ToString()<br />
+
+                @if (Model.InnerException != null)
+                {
+                    <strong>Inner Exception:</strong><br />
+                    <p>@Model.InnerException.ToString()</p>
+                }
+            </div>*@
+
+    </div>
+</div>
+
+
+
