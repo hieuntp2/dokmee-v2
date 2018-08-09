@@ -43,10 +43,8 @@ namespace Web.Controllers
 
         public ActionResult Index()
         {
-
             try
             {
-                throw new Exception("Some message");
                 IndexModel model = new IndexModel();
                 IEnumerable<DokmeeCabinet> dokmeeCabinets = _dokmeeService.GetCurrentUserCabinet(User.Identity.GetUserId());
                 model.Cabinets = _mapper.Map<IEnumerable<Cabinet>>(dokmeeCabinets);
@@ -220,15 +218,15 @@ namespace Web.Controllers
             //remove file in Recycle bin
             dokResult = dokResult?.Where(x => x.FullPath != null && !x.FullPath.ToUpper().Contains("RECYCLE BIN")).ToList();
 
-            bool haveDocumentStausNew = model.TableTitles.Any(t =>
-              t.Title.ToUpper().Equals("DOCUMENT STATUS") && t.ValueString.Equals(EDocumentStatus.New.ToString()));
-            if (haveDocumentStausNew)
-            {
-                DocumentIndex docStatus = model.TableTitles.Single(t => t.Title.ToUpper().Equals("DOCUMENT STATUS"));
-                dokResult.AddRange(_dokmeeService.Search(username, docStatus.Title, string.Empty, cabinetId, searchFieldType).ToList());
-            }
-            model.DocumentItems = _mapper.Map<List<DocumentItem>>(dokResult).Where(t => !t.IsInRecycleBin).ToList();
+            //bool haveDocumentStausNew = model.TableTitles.Any(t =>
+            //  t.Title.ToUpper().Equals("DOCUMENT STATUS") && t.ValueString.Equals(EDocumentStatus.New.ToString()));
+            //if (haveDocumentStausNew)
+            //{
+            //    DocumentIndex docStatus = model.TableTitles.Single(t => t.Title.ToUpper().Equals("DOCUMENT STATUS"));
+            //    dokResult.AddRange(_dokmeeService.Search(username, docStatus.Title, string.Empty, cabinetId, searchFieldType).ToList());
+            //}
 
+            model.DocumentItems = _mapper.Map<List<DocumentItem>>(dokResult).Where(t => !t.IsInRecycleBin).ToList();
             // sorting index result
             foreach (var doc in model.DocumentItems)
             {

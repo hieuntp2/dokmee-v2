@@ -192,6 +192,23 @@ function UpdateStatusSearchIndex() {
         return;
     }
 
+    var isNotSelectedStatus = true;
+    $('#tblfileSystems > tbody  > tr').each(function () {
+        var select = $(this).find('input[type="checkbox"]:checked');
+        if (select.is(":checked")) {
+            var status = $(this).find('#status').val();
+            if (status = "null") {
+                isNotSelectedStatus = false;
+            }
+        }
+    });
+    if (!isNotSelectedStatus) {
+        swal({
+            text: 'Please select document status!'
+        });
+        return;
+    }
+
     var url = $("#updatestatus").val();;
     $(".loading-overlay").show();
     $.ajax({

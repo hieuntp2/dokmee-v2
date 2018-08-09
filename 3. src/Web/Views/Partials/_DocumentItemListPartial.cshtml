@@ -75,10 +75,10 @@ IMPORTANCE: Required this JS file:
                             {
                                 if (index.Title.ToUpper() == StaticStringName.DOCUMENT_STATUS.ToUpper())
                                 {
-                                    if (string.IsNullOrEmpty(index.ValueString))
-                                    {
-                                        index.ValueString = EDocumentStatus.New.ToString();
-                                    }
+                                    //if (string.IsNullOrEmpty(index.ValueString))
+                                    //{
+                                      //  index.ValueString = EDocumentStatus.New.ToString();
+                                    //}
                                     string value = index.ValueString;
                                     <td>
                                         @{
@@ -86,7 +86,6 @@ IMPORTANCE: Required this JS file:
                                             {
                                                 ElementId = "status",
                                                 SelectedValue = index.ValueString,
-
                                             };
 
                                             @Html.Partial("~/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
