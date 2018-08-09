@@ -25,86 +25,17 @@
                             <select class="form-control selectpicker" id="search-select-index">
                                 @foreach (var index in Model.TableTitles)
                                 {
-                                    <option value="@index.Id" @(index == Model.TableTitles.First() ? "selected" : "")>
+                                    <option value="@index.Id" @(!string.IsNullOrWhiteSpace(index.ValueString) ? "selected" : "")>
                                         @index.Title
                                     </option>
                                 }
                             </select>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             @foreach (var index in Model.TableTitles)
                             {
                                 int i = Model.TableTitles.IndexOf(index);
-                                <div class="index-select-input" id="div-search-input-@index.Id">
-                                    <input type="hidden" value="@index.Id" />
-                                    <input type="hidden" value="@index.Title" />
-                                    <input type="hidden" value="@index.Order" />
-                                    <input type="hidden" value="@index.Type" />
-
-                                    @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
-                                    {
-                                        DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
-                                        {
-                                            ElementId = "search-index-" + index.Id,
-                                            ElementClass = "",
-                                            SelectedValue = index.ValueString
-                                        };
-
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
-                                    }
-                                    else
-                                    {
-                                        switch (index.Type)
-                                        {
-                                            case IndexValueType.Integer:
-                                            case IndexValueType.Float:
-                                                <input type="number" class="form-control index-select-input" style="display: none;" step="0.00001"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
-
-                                            case IndexValueType.DateTime:
-                                                <input type="date" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
-
-                                            case IndexValueType.String:
-                                                <input type="text" class="form-control index-select-input" style="display: none;"
-                                                       id="search-index-@index.Id" placeholder="@index.Title" />
-                                                break;
-                                        }
-                                    }
-                                </div>
-                            }
-                        </div>
-                        <div class="col-sm-1">
-                            <button class="btn btn-default pull-left" onclick="onAddSearchConditionClick()" type="button">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
-                        <div class="col-sm-2">
-                            <button class="btn btn-primary">
-                                <i class="fa fa-search"></i> Search
-                            </button>
-                        </div>
-                        <br />
-                    </div>
-                   
-                </div>
-                <!-- End Select Index -->
-
-                <div class="condition-input-div">
-                    @foreach (var index in Model.TableTitles)
-                    {
-                        int i = Model.TableTitles.IndexOf(index);
-                        <div id="row-search-input-group-@index.Id" style='@(string.IsNullOrWhiteSpace(index.ValueString) ? "display: none;" : "")'>
-                            <div class="form-group">
-                                <div class="col-sm-3">
-                                    <!--Nothing-->
-                                </div>
-                                <div class="col-sm-3">
-                                    <label class="pull-right control-label custom-control-lable">@index.Title</label>
-                                </div>
-                                <div class="col-sm-3">
+                                <div class="index-select-input-div" id="div-search-input-@index.Id" style="display:none;">
                                     <input type="hidden" name="TableTitles[@i].Id" value="@index.Id" />
                                     <input type="hidden" name="TableTitles[@i].Title" value="@index.Title" />
                                     <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
@@ -114,10 +45,10 @@
                                     {
                                         DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
                                         {
-                                            ElementId = "search-input-index-" + index.Id,
-                                            ElementName = "TableTitles[" + i + "].Value",
+                                            ElementId = "search-index-" + index.Id,
+                                            ElementClass = "index-select-input",
                                             SelectedValue = index.ValueString,
-                                            ElementClass = "search-input-value"
+                                            ElementName = "TableTitles[" + i + "].Value",
                                         };
 
                                         @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
@@ -128,38 +59,40 @@
                                         {
                                             case IndexValueType.Integer:
                                             case IndexValueType.Float:
-                                                <input type="number" class="form-control search-input-value" step="0.00001"
-                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                <input type="number" class="form-control index-select-input"  step="0.00001"
+                                                       id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value"
+                                                       value="@index.ValueString" />
                                                 break;
 
                                             case IndexValueType.DateTime:
-                                                <input type="date" class="form-control search-input-value"
-                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                <input type="date" class="form-control index-select-input"
+                                                       id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value"
+                                                       value="@index.ValueString" />
                                                 break;
 
                                             case IndexValueType.String:
-                                                <input type="text" class="form-control search-input-value"
-                                                       value="@index.ValueString" id="search-input-index-@index.Id" placeholder="@index.Title"
-                                                       name="TableTitles[@i].Value" />
+                                                <input type="text" class="form-control index-select-input"
+                                                       id="search-index-@index.Id" placeholder="@index.Title"
+                                                       name="TableTitles[@i].Value"
+                                                       value="@index.ValueString" />
                                                 break;
                                         }
                                     }
                                 </div>
-                                <div class="col-sm-1">
-                                    <button class="btn btn-default pull-left" onclick="onRemoveSearchInput('@index.Id')" type="button" title="Remove this condition">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                                <div class="col-sm-2">
-
-                                </div>
-                                <br />
-                            </div>
+                            }
                         </div>
-                    }
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary">
+                                <i class="fa fa-search"></i> Search
+                            </button>
+                        </div>
+                        <br />
+                    </div>
+
                 </div>
+                <!-- End Select Index -->
             </form>
         </div>
         <hr />

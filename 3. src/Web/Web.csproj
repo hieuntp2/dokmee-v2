@@ -558,6 +558,7 @@
     <Content Include="Views\Home\_documentStatusSelect.cshtml" />
     <Content Include="Views\Partials\_DocumetStatusSelection.cshtml" />
     <Content Include="Views\Partials\_DocumentItemListPartial.cshtml" />
+    <Content Include="Views\Home\SearchWithMultiCondition.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
