@@ -7,44 +7,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Repositories;
 using Services.TempDbService;
+using Services.TempDbService.Exceptions;
 using Services.UserSerivce.Exceptions;
 
 namespace Services.UserSerivce
 {
-  public class UserService : IUserService
-  {
-    private readonly IPrincipal _userPrincipal;
-    private ITempDbService _tempDbService;
-
-    public UserService(IPrincipal userPrincipal, ITempDbService tempDbService)
+    public class UserService : IUserService
     {
-      _userPrincipal = userPrincipal;
-      _tempDbService = tempDbService;
-    }
+        private readonly IPrincipal _userPrincipal;
+        private ITempDbService _tempDbService;
 
-    public bool IsAuthenticate()
-    {
-      return _userPrincipal.Identity.IsAuthenticated;
-    }
+        public UserService(IPrincipal userPrincipal, ITempDbService tempDbService)
+        {
+            _userPrincipal = userPrincipal;
+            _tempDbService = tempDbService;
+        }
 
-    public string GetUserId()
-    {
-      return _userPrincipal.Identity.GetUserId();
-    }
+        public bool IsAuthenticate()
+        {
+            return _userPrincipal.Identity.IsAuthenticated;
+        }
 
-    public void UpdateCabinet(string cabinetId)
-    {
-      _tempDbService.UpdateCabinet(GetUserId(), cabinetId);
-    }
+        public string GetUserId()
+        {
+            return _userPrincipal.Identity.GetUserId();
+        }
 
-    public string GetCurrentCabinetId()
-    {
-      UserLogin userLogin = _tempDbService.GetUserLogin(GetUserId());
-      if (string.IsNullOrWhiteSpace(userLogin.CurrentCabinetId))
-      {
-        throw new CabinetNotSelectedException("Cabinet not selceted");
-      }
-      return userLogin.CurrentCabinetId;
+        public void UpdateCabinet(string cabinetId)
+        {
+            _tempDbService.UpdateCabinet(GetUserId(), cabinetId);
+        }
+
+        public string GetCurrentCabinetId()
+        {
+            UserLogin userLogin = _tempDbService.GetUserLogin(GetUserId());
+            if (userLogin == null)
+            {
+                throw new UserNotFoundInTempDbException();
+            }
+            if (string.IsNullOrWhiteSpace(userLogin.CurrentCabinetId))
+            {
+                throw new CabinetNotSelectedException("Cabinet not selceted");
+            }
+            return userLogin.CurrentCabinetId;
+        }
     }
-  }
 }
