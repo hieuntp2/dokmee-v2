@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using DokCapture.ServicenNetFramework.Auth;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -77,7 +78,8 @@ namespace Web.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
+        [OutputCache(NoStore = true, Location = OutputCacheLocation.None)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
@@ -133,12 +135,16 @@ namespace Web.Controllers
         //[ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            // remove temp database account
-            var username = User.Identity.GetUserId();
-            TempDbServiceOj.RemoveUserLogin(username);
+            if (User.Identity.IsAuthenticated)
+            {
+                // remove temp database account
+                var username = User.Identity.GetUserId();
+                TempDbServiceOj.RemoveUserLogin(username);
 
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            }
+         
+            return RedirectToAction("Login", "Account");
         }
 
         protected override void Dispose(bool disposing)

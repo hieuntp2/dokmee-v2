@@ -49,7 +49,7 @@ namespace Services.TempDbService
 
         public UserLogin GetUserLogin(string username)
         {
-            var result = _dbContext.UserLogins.SingleOrDefault(t => t.Username == username);
+            var result = _dbContext.UserLogins.FirstOrDefault(t => t.Username == username);
 
             if (result == null) return null;
             // validate login user is timeout
@@ -57,6 +57,8 @@ namespace Services.TempDbService
             {
                 if (result.Updated.AddMinutes(15) < DateTime.Now)
                 {
+                    // remove timeout current user
+                    RemoveUserLogin(username);
                     return null;
                 }
             }
@@ -69,10 +71,10 @@ namespace Services.TempDbService
 
         public void RemoveUserLogin(string username)
         {
-            var userLogin = _dbContext.UserLogins.SingleOrDefault(t => t.Username == username);
-            if (userLogin != null)
+            var userLogins = _dbContext.UserLogins.Where(t => t.Username == username);
+            if (userLogins.Any())
             {
-                _dbContext.UserLogins.Remove(userLogin);
+                _dbContext.UserLogins.RemoveRange(userLogins);
                 _dbContext.SaveChanges();
             }
         }
