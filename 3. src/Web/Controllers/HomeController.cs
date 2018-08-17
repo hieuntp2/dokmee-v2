@@ -145,7 +145,6 @@ namespace Web.Controllers
             return Json(new { });
         }
 
-        //[HttpPost]
         public JsonResult Preview(string id)
         {
             string cabinetId = _userService.GetCurrentCabinetId();
@@ -216,15 +215,6 @@ namespace Web.Controllers
 
             //remove file in Recycle bin
             dokResult = dokResult?.Where(x => x.FullPath != null && !x.FullPath.ToUpper().Contains(StaticStringName.RECYCLE_BIN)).ToList();
-
-            //bool haveDocumentStausNew = model.TableTitles.Any(t =>
-            //  t.Title.ToUpper().Equals("DOCUMENT STATUS") && t.ValueString.Equals(EDocumentStatus.New.ToString()));
-            //if (haveDocumentStausNew)
-            //{
-            //    DocumentIndex docStatus = model.TableTitles.Single(t => t.Title.ToUpper().Equals("DOCUMENT STATUS"));
-            //    dokResult.AddRange(_dokmeeService.Search(username, docStatus.Title, string.Empty, cabinetId, searchFieldType).ToList());
-            //}
-
             model.DocumentItems = _mapper.Map<List<DocumentItem>>(dokResult).Where(t => !t.IsInRecycleBin).ToList();
             // sorting index result
             foreach (var doc in model.DocumentItems)

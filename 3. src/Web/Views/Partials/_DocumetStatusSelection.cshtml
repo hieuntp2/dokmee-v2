@@ -1,6 +1,9 @@
 ﻿@using Web.Models
+@using Services.ConfiguraionService
 @model Web.ViewModels.Elements.DocumentStatusSelectModel
 @{
+    var configuration = new ConfigurationService();
+    var customerStatus = configuration.CustomerStatusIndexValue;
     if (string.IsNullOrWhiteSpace(Model.SelectedValue))
     {
         Model.SelectedValue = string.Empty;
@@ -9,14 +12,26 @@
 <select class="form-control selectpicker  @Model.ElementClass" style="margin: auto;"
         name="@Model.ElementName"
         id="@Model.ElementId">
-    <option value="" @(string.IsNullOrWhiteSpace(Model.SelectedValue) ? "selected" : "") disabled="">Please select value</option>
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.New.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.New.ToString()">
-        @EDocumentStatus.New.ToString()
-    </option>
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Updated.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Updated.ToString()">
-        @EDocumentStatus.Updated.ToString()
-    </option>
-    <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Complete.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Complete.ToString()">
-        @EDocumentStatus.Complete.ToString()
-    </option>
+    @if (customerStatus != null && customerStatus.Any())
+    {
+        <option value="" @(string.IsNullOrWhiteSpace(Model.SelectedValue) ? "selected" : "") disabled="">Please select value</option>
+        foreach (var item in customerStatus)
+        {
+            var status = item.Trim();
+        <option @(Model.SelectedValue.ToUpper().Equals(status.ToUpper()) ? "selected" : "")
+                value="@status">
+            @status
+        </option>
+        }
+    }
+
+    @*<option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.New.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.New.ToString()">
+            @EDocumentStatus.New.ToString()
+        </option>
+        <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Updated.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Updated.ToString()">
+            @EDocumentStatus.Updated.ToString()
+        </option>
+        <option @(Model.SelectedValue.ToUpper().Equals(EDocumentStatus.Complete.ToString().ToUpper()) ? "selected" : "") value="@EDocumentStatus.Complete.ToString()">
+            @EDocumentStatus.Complete.ToString()
+        </option>*@
 </select>

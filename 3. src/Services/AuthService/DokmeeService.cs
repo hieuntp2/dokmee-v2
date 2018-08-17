@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DokCapture.ServicenNetFramework.Auth;
+﻿using DokCapture.ServicenNetFramework.Auth;
 using DokCapture.ServicenNetFramework.Auth.Models;
-using Services.AuthService.Models;
+using Dokmee.Dms.Advanced.WebAccess.Data;
 using Dokmee.Dms.Connector.Advanced;
 using Dokmee.Dms.Connector.Advanced.Core.Data;
 using Dokmee.Dms.Connector.Advanced.Extension;
 using Repositories;
+using Services.AuthService.Models;
+using Services.ConfiguraionService;
 using Services.SessionHelperService;
 using Services.TempDbService;
-using Dokmee.Dms.Advanced.WebAccess.Data;
-using System.Reflection;
-using System.Diagnostics;
-using Services.ConfiguraionService;
 using Services.TempDbService.Exceptions;
 using Services.UserSerivce;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Services.AuthService
 {
-    public class DokmeeService : IDokmeeService
+	public class DokmeeService : IDokmeeService
     {
         private ISessionHelperService _sessionHelperService;
         private DmsConnector _dmsConnector;
@@ -209,8 +207,6 @@ namespace Services.AuthService
             }
 
             DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
-            //var config = Assembly.GetExecutingAssembly().Location;
-            //Process.Start(DmsConnectorProperty.ViewFile(id), config);
             return DmsConnectorProperty.ViewFile(id);
         }
 
@@ -261,9 +257,8 @@ namespace Services.AuthService
             if (!string.IsNullOrEmpty(cabinetId) && Guid.TryParse(cabinetId, out id))
             {
                 DmsConnectorProperty.RegisterCabinet(id);
-                results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);
-
-            }
+                results = DmsConnectorProperty.GetCabinetIndexInfoByID(id);				
+			}
             return results;
         }
 
@@ -324,7 +319,7 @@ namespace Services.AuthService
                 if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
                 {
                     var listIndexes = DmsConnectorProperty.GetCabinetIndexInfoByID(cabinetId);
-                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == "DOCUMENT STATUS");
+                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == _configurationService.CustomerStatusIndex.ToUpper());
                     if (statusIndex != null)
                     {
                         statusIndex.IndexValue = customerStatus;

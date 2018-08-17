@@ -1,10 +1,12 @@
 ﻿@using System.Activities.Statements
 @using Dokmee.Dms.Advanced.WebAccess.Data
 @using Services
+@using Services.ConfiguraionService
 @using Web.ViewModels.Elements
 @model Web.ViewModels.Home.SearchModel
 @{
     ViewBag.Title = "Search File";
+    var configuration = new ConfigurationService();
 }
 
 @Html.Partial("_loadingOverlay")
@@ -41,7 +43,7 @@
                                     <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
                                     <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
 
-                                    @if (string.Equals(index.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()))
+                                    @if (string.Equals(index.Title.ToUpper(), configuration.CustomerStatusIndex.ToUpper()))
                                     {
                                         DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
                                         {

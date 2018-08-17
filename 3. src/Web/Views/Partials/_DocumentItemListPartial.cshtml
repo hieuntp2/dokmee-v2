@@ -1,9 +1,9 @@
-﻿@using Services
+﻿@using Services.ConfiguraionService
 @using Web.Models
 @using Web.ViewModels.Elements
 @model Web.ViewModels.Elements.DocumentItemListModel
 @{
-
+    var configuration = new ConfigurationService();
 }
 <!--
 IMPORTANCE: Required this JS file:
@@ -81,11 +81,11 @@ IMPORTANCE: Required this JS file:
                         {
                             foreach (var index in doc.Indexs)
                             {
-                                if (index.Title.ToUpper() == StaticStringName.DOCUMENT_STATUS.ToUpper())
+                                if (index.Title.ToUpper() == configuration.CustomerStatusIndex.ToUpper())
                                 {
                                     //if (string.IsNullOrEmpty(index.ValueString))
                                     //{
-                                      //  index.ValueString = EDocumentStatus.New.ToString();
+                                    //  index.ValueString = EDocumentStatus.New.ToString();
                                     //}
                                     string value = index.ValueString;
                                     <td>

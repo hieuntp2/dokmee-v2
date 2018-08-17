@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Dokmee.Dms.Advanced.WebAccess.Data;
+using Services.ConfiguraionService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Dokmee.Dms.Advanced.WebAccess.Data;
-using Services;
-using Web.Models;
 
 namespace Web.ViewModels.Home
 {
-    public class SearchModel
+	public class SearchModel
     {
         public string Key { get; set; }
 
@@ -19,13 +17,15 @@ namespace Web.ViewModels.Home
             get => _tableTitles;
             set
             {
-                _tableTitles = value;
+				var configuration = new ConfigurationService();
+
+				_tableTitles = value;
 
                 Conditions = value.Where(t => !string.IsNullOrWhiteSpace(t.ValueString)).ToList();
                 _haveSearchValue = Conditions.Any();
 
                 DocumentIndex statusFind = value.SingleOrDefault(t =>
-                    string.Equals(t.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()));
+                    string.Equals(t.Title.ToUpper(), configuration.CustomerStatusIndex.ToUpper()));
                 HaveDocumentStatusTitle = statusFind != null;
             }
         }

@@ -1,4 +1,4 @@
-﻿@using Services
+﻿@using Services.ConfiguraionService
 @model Web.ViewModels.Home.DetailModel
 @{
     ViewBag.Title = "File Details";
@@ -12,6 +12,8 @@
     }
     var fileCount = (totalFiles) + " File" + (totalFiles > 1 ? "s" : "");
     var cabinetId = ViewBag.cabinetId;
+
+    var configuration = new ConfigurationService();
 }
 
 @Html.Partial("_loadingOverlay")
@@ -81,7 +83,7 @@
                                         var completeSelected = "";
 
                                         var header = results.First().IndexFieldPairCollection[i].IndexName;
-                                        if (header.ToUpper() == StaticStringName.DOCUMENT_STATUS)
+                                        if (header.ToUpper() == configuration.CustomerStatusIndex.ToUpper())
                                         {
                                             if (string.IsNullOrEmpty(data))
                                             {

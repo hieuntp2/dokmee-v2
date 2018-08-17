@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Services.ConfiguraionService
 {
-    public interface IConfigurationService
+	public interface IConfigurationService
     {
         string DbUsername { get; }
         string DbPassword { get; }
@@ -16,5 +12,7 @@ namespace Services.ConfiguraionService
 
         string DokmeeCloudUrl { get; }
         string DokmeeDmsHostUrl { get; }
-    }
+		string CustomerStatusIndex { get; }
+		List<string> CustomerStatusIndexValue { get; }
+	}
 }

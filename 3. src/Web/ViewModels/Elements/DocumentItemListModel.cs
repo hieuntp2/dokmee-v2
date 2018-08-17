@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Services;
+using Services.ConfiguraionService;
 using Web.ViewModels.Home;
 
 namespace Web.ViewModels.Elements
@@ -16,13 +17,14 @@ namespace Web.ViewModels.Elements
             get => _tableTitles;
             set
             {
-                _tableTitles = value;
+				var configuration = new ConfigurationService();
+				_tableTitles = value;
 
                 Conditions = value.Where(t => !string.IsNullOrWhiteSpace(t.ValueString)).ToList();
                 HaveSearchValue = Conditions.Any();
 
                 DocumentIndex statusFind = value.SingleOrDefault(t =>
-                    string.Equals(t.Title.ToUpper(), StaticStringName.DOCUMENT_STATUS.ToUpper()));
+                    string.Equals(t.Title.ToUpper(), configuration.CustomerStatusIndex.ToUpper()));
                 HaveDocumentStatusTitle = statusFind != null;
             }
         }
