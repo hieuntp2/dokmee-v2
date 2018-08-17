@@ -319,7 +319,7 @@ namespace Services.AuthService
                 if (dokmeeIndexInfos != null && dokmeeIndexInfos.Any())
                 {
                     var listIndexes = DmsConnectorProperty.GetCabinetIndexInfoByID(cabinetId);
-                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == _configurationService.CustomerStatusIndex.ToUpper());
+                    var statusIndex = dokmeeIndexInfos.FirstOrDefault(x => x.IndexName.ToUpper() == _configurationService.DocumentStatusIndex.ToUpper());
                     if (statusIndex != null)
                     {
                         statusIndex.IndexValue = customerStatus;

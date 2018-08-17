@@ -25,7 +25,7 @@ namespace Web.ViewModels.Home
                 _haveSearchValue = Conditions.Any();
 
                 DocumentIndex statusFind = value.SingleOrDefault(t =>
-                    string.Equals(t.Title.ToUpper(), configuration.CustomerStatusIndex.ToUpper()));
+                    string.Equals(t.Title.ToUpper(), configuration.DocumentStatusIndex.ToUpper()));
                 HaveDocumentStatusTitle = statusFind != null;
             }
         }

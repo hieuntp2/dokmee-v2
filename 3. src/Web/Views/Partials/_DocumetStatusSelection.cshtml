@@ -3,7 +3,7 @@
 @model Web.ViewModels.Elements.DocumentStatusSelectModel
 @{
     var configuration = new ConfigurationService();
-    var customerStatus = configuration.CustomerStatusIndexValue;
+    var customerStatus = configuration.DocumentStatusIndexValue;
     if (string.IsNullOrWhiteSpace(Model.SelectedValue))
     {
         Model.SelectedValue = string.Empty;

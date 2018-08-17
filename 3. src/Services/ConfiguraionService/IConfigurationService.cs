@@ -12,7 +12,7 @@ namespace Services.ConfiguraionService
 
         string DokmeeCloudUrl { get; }
         string DokmeeDmsHostUrl { get; }
-		string CustomerStatusIndex { get; }
-		List<string> CustomerStatusIndexValue { get; }
+		string DocumentStatusIndex { get; }
+		List<string> DocumentStatusIndexValue { get; }
 	}
 }

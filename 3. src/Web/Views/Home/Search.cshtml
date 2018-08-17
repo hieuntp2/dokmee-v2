@@ -43,7 +43,7 @@
                                     <input type="hidden" name="TableTitles[@i].Order" value="@index.Order" />
                                     <input type="hidden" name="TableTitles[@i].Type" value="@index.Type" />
 
-                                    @if (string.Equals(index.Title.ToUpper(), configuration.CustomerStatusIndex.ToUpper()))
+                                    @if (string.Equals(index.Title.ToUpper(), configuration.DocumentStatusIndex.ToUpper()))
                                     {
                                         DocumentStatusSelectModel docStatusModel = new DocumentStatusSelectModel()
                                         {
