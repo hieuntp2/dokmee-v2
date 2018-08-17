@@ -43,7 +43,7 @@ function preview(id) {
                     });
                 }
             } else {
-                var message = "Something wrong. Please try again.";
+                var message = "Something happened. Please try again.";
                 if (rs.message) message = rs.message;
                 swal({
                     type: 'error',
@@ -57,7 +57,7 @@ function preview(id) {
             swal({
                 type: 'error',
                 title: 'Oops...',
-                text: 'Something wrong. Please try again.'
+                text: 'Something happened. Please try again.'
             });
         }
     });
@@ -121,7 +121,7 @@ function complete() {
                         $(".loading-overlay").hide();
                     },
                     error: function (rs) {
-                        var message = "Something wrong. Please try again.";
+                        var message = "Something happened. Please try again.";
                         if (rs.message) message = rs.message;
                         swal({
                             type: 'error',
@@ -171,7 +171,7 @@ function updateAllStatus() {
             $(".loading-overlay").hide();
         },
         error: function (rs) {
-            var message = "Something wrong. Please try again.";
+            var message = "Something happened. Please try again.";
             if (rs.message) message = rs.message;
             swal({
                 type: 'error',
@@ -223,7 +223,7 @@ function UpdateStatusSearchIndex() {
             $(".loading-overlay").hide();
         },
         error: function (rs) {
-            var message = "Something wrong. Please try again.";
+            var message = "Something happened. Please try again.";
             if (rs.message) message = rs.message;
             swal({
                 type: 'error',

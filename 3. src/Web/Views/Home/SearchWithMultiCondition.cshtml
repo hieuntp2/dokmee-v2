@@ -50,7 +50,7 @@
                                             SelectedValue = index.ValueString
                                         };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        @Html.Partial(Url.Content("~/Views/Partials/_DocumetStatusSelection.cshtml"), docStatusModel)
                                     }
                                     else
                                     {
@@ -120,7 +120,7 @@
                                             ElementClass = "search-input-value"
                                         };
 
-                                        @Html.Partial("/Views/Partials/_DocumetStatusSelection.cshtml", docStatusModel)
+                                        @Html.Partial(Url.Content("~/Views/Partials/_DocumetStatusSelection.cshtml"), docStatusModel)
                                     }
                                     else
                                     {
@@ -171,7 +171,7 @@
                     TableTitles = Model.TableTitles,
                     CabinetId = Model.CabinetId
                 };
-                Html.RenderPartial("/Views/Partials/_DocumentItemListPartial.cshtml", listIitems);
+                Html.RenderPartial(Url.Content("~/Views/Partials/_DocumentItemListPartial.cshtml"), listIitems);
             }
         </div>
         <div class="box-footer">
