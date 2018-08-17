@@ -37,8 +37,8 @@
 {
     <script>
         function openCabinet() {
-            //window.location.href = "/home/UpdateCabinet?cabinetId=" + $("#select-cabinet").val();
-             var id = $("#select-cabinet").val();
+            var id = $("#select-cabinet").val();
+            $("#loading-overlay").show();
             window.location.href = "@Url.Action( "UpdateCabinet", "Home",new { cabinetId="id" })".replace("id", id);
         }
     </script>

@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-   
+
 </head>
 <body>
+
+    @Html.Partial("~/Views/Home/_loadingOverlay.cshtml")
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -34,8 +36,6 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Select Cabinet", "Index", "Home")</li>
-                    @*<li>@Html.ActionLink("Open Cabinet", "CabinetDetail", "Home")</li>*@
-                    @*<li>@Html.ActionLink("Search", "Search", "Home")</li>*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

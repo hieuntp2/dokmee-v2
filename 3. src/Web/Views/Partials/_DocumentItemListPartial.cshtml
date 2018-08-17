@@ -19,7 +19,7 @@ IMPORTANCE: Required this JS file:
         @if (Model.HaveDocumentStatusTitle)
         {
             <button class="btn btn-primary" type="button" onclick="UpdateStatusSearchIndex()">
-                <i class="fa fa-save"></i> Update
+                <i class="fa fa-save"></i> Save selected
             </button>
         }
 
@@ -29,7 +29,7 @@ IMPORTANCE: Required this JS file:
         {
             <div class="input-group">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status</button>
+                    <button class="btn btn-default" onclick="updateAllStatus()"><i class="fa fa-save"></i> Update status to:</button>
                 </span>
                 @{
                     DocumentStatusSelectModel modelSelectAll = new DocumentStatusSelectModel()
