@@ -1,7 +1,9 @@
 ﻿@using Web.Models
 @model LoginViewModel
 @{
-    ViewBag.Title = "Log in";
+                /**/
+
+                ViewBag.Title = "Log in";
 }
 
 @Html.Partial("~/Views/Home/_loadingOverlay.cshtml")
@@ -9,7 +11,7 @@
 <section style="top: 10vh;">
 
     <div class="col-md-6 col-md-offset-3" style="text-align: center;top: 10vh;">
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id="login-form-id" }))
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "login-form-id" }))
         {
             <div class="my-box">
                 <div class="box-header">
@@ -58,9 +60,9 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    
+
     <script>
-        $( document ).ready(function() {
+        $(document).ready(function () {
             $("#login-form-id").submit(function (event) {
                 $("#loading-overlay").show();
                 $("#submit-button").attr("disabled", "disabled");

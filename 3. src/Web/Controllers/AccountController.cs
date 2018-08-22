@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Services.AuthService.Models;
+using Services.ConfiguraionService;
 using Services.TempDbService;
 using Unity.Attributes;
 using Web.Models;
@@ -22,7 +23,7 @@ namespace Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private IConfigurationService _configurationService;
         [Dependency]
         public IDokmeeService DokmeeService { get; set; }
 
@@ -34,11 +35,13 @@ namespace Web.Controllers
 
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IDokmeeService dokmeeService)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, 
+            IDokmeeService dokmeeService, IConfigurationService configurationService)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             DokmeeService = dokmeeService;
+            _configurationService = configurationService;
         }
 
         public ApplicationSignInManager SignInManager
@@ -70,6 +73,11 @@ namespace Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            ConfigurationService configurationService = new ConfigurationService();
+            if (configurationService.IsFirstTime)
+            {
+                return RedirectToAction("Index", "Install");
+            }
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
