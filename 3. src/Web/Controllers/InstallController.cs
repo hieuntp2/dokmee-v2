@@ -100,14 +100,14 @@ namespace Web.Controllers
 			try
 			{
 				DokmeeTempEntities dbContext = new DokmeeTempEntities();
-				var allUsers = dbContext.UserLogins.ToList();
+				var allUsers = dbContext.UserLogins.FirstOrDefault();
 				ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-				applicationDbContext.Users.ToList();
-				applicationDbContext.Roles.ToList();
+				applicationDbContext.Users.FirstOrDefault();
+				applicationDbContext.Roles.FirstOrDefault();
 			}
 			catch
 			{
-				throw new Exception("Fail to connect database");
+				throw new Exception($"Can not connect database: '{model.SQLServerName}'");
 			}
 
 		}
