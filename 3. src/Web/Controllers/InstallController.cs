@@ -1,9 +1,7 @@
-﻿using Repositories;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Web.Mvc;
 using Web.Models;
 
@@ -97,19 +95,6 @@ namespace Web.Controllers
 			ConnectionStringsSection sec = (ConnectionStringsSection)objConfig.GetSection("connectionStrings");
 			sec.ConnectionStrings[DbEntityName].ConnectionString = connectionString;
 			objConfig.Save();
-			try
-			{
-				DokmeeTempEntities dbContext = new DokmeeTempEntities();
-				var allUsers = dbContext.UserLogins.FirstOrDefault();
-				ApplicationDbContext applicationDbContext = new ApplicationDbContext();
-				applicationDbContext.Users.FirstOrDefault();
-				applicationDbContext.Roles.FirstOrDefault();
-			}
-			catch
-			{
-				throw new Exception($"Can not connect database: '{model.SQLServerName}'");
-			}
-
 		}
 
 		private bool TestConnectionString(string connect)
