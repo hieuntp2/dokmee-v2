@@ -229,14 +229,29 @@ namespace Web.Controllers
         [HttpPost]
         public ActionResult Complete(Dictionary<object, object> args)
         {
-            if (args != null && args.ContainsKey("NodeId"))
+            try
             {
-                string cabinetId = _userService.GetCurrentCabinetId();
-                string username = User.Identity.GetUserId();
-                var tempFolder = _configurationService.TempFolder;
-                _dokmeeService.Complete(username, args, tempFolder, cabinetId);
+                if (args != null && args.ContainsKey("NodeId"))
+                {
+                    string cabinetId = _userService.GetCurrentCabinetId();
+                    string username = User.Identity.GetUserId();
+                    var tempFolder = _configurationService.TempFolder;
+                    _dokmeeService.Complete(username, args, tempFolder, cabinetId);
+                }
+                return Json(new
+                {
+                    status = true
+                });
             }
-            return Json(new { });
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = false,
+                    message = ex.Message
+                });
+            }
+
         }
 
         protected override void OnException(ExceptionContext filterContext)

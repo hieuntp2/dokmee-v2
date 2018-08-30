@@ -99,7 +99,7 @@ function complete() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes'
-        }).then((result) => {
+        }).then(function(result) {
             if (!result.value) {
                 return;
             }
@@ -113,12 +113,21 @@ function complete() {
                     data: '{"args":' + JSON.stringify(args) + '}',
                     contentType: "application/json; charset=utf-8",
                     success: function (rs) {
-                        for (var i = trIdx.length - 1; i >= 0; i--) {
-                            var rowdelete = trIdx[i];
-                            console.log(rowdelete);
-                            document.getElementById('tblfileSystems').deleteRow(rowdelete);
-                        }
                         $(".loading-overlay").hide();
+                        if (rs.status) {
+                            for (var i = trIdx.length - 1; i >= 0; i--) {
+                                var rowdelete = trIdx[i];
+                                console.log(rowdelete);
+                                document.getElementById('tblfileSystems').deleteRow(rowdelete);
+                            }
+                            swal({
+                                text: "Successful"
+                            });
+                        } else {
+                            swal({
+                                text: rs.message
+                            });
+                        }                       
                     },
                     error: function (rs) {
                         var message = "Something happened. Please try again.";

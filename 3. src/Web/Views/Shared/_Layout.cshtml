@@ -13,10 +13,9 @@
     <link href="~/Content/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <link href="~/Content/plugins/iCheck/skins/minimal/blue.css" rel="stylesheet" />
     <link href="~/Content/plugins/iCheck/skins/all.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/Content/external/font-awesome.min.css" rel="stylesheet" />
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-
+    <link href="~/Content/external/bootstrap-select.min.css" rel="stylesheet" />
 </head>
 <body>
 
@@ -29,14 +28,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/home">
-                    <img src="~/Content/imgs/dokmee-logo.jpg" class="logo" />
+                <a href='@Url.Action("Index", "Home")'>
+                    <img src='@Url.Content("~/Content/imgs/dokmee-logo.jpg")' class="logo" />
                 </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Select Cabinet", "Index", "Home")</li>
-                    @*<li>@Html.ActionLink("Configuration", "Index", "Config")</li>*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -44,12 +42,8 @@
     </div>
     <div class="container body-content" style="padding-left: 0px; padding-right: 0px;">
         @RenderBody()
-        <footer>
-            @*<p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>*@
-        </footer>
+        <footer></footer>
     </div>
-
-
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
@@ -58,10 +52,16 @@
     <script src="~/Content/plugins/iCheck/icheck.js"></script>
     <script src="~/Content/plugins/iCheck/icheck.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-    <script src="~/Content/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/Content/external/bootstrap-select.min.js"></script>
+    <script src="~/Content/external/bootstrap-select.min.js"></script>
+
     <!-- Optional: include a polyfill for ES6 Promises for IE11 and Android browser -->
-    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+    <script src="~/Content/external/promise-polyfill.js"></script>
+    <script src="~/Content/external/polyfill.min.js"></script>
+    <script src="~/Content/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
+    @*<script src="~/Content/external/promise-polyfill.js"></script>*@
     <script src="~/Scripts/home/detail.js"></script>
+
 </body>
 </html>

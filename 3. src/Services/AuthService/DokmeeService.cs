@@ -303,6 +303,10 @@ namespace Services.AuthService
                             var customerStatus = "Complete";
                             UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
                         }
+                        else
+                        {
+                            throw new Exception("Cant find folder name " + tempFolder + " to move selected file!");
+                        }
                     }
                 }
             }
