@@ -209,8 +209,9 @@ namespace Services.AuthService
 
 			DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
 			string url = DmsConnectorProperty.ViewFile(id);
-			string machineName = Environment.MachineName;
-			string localhost = "localhost";
+            string machineName = HttpContext.Current.Request.Url.Host;
+
+            string localhost = "localhost";
 			if (url.Contains(localhost))
 			{
 				url = url.Replace(localhost, machineName);

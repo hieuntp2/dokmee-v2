@@ -30,18 +30,27 @@ function preview(id) {
             $(".loading-overlay").hide();
             if (!rs.isError) {
                 console.log(rs.url);
-                var win = window.open(rs.url, '_blank');
-                if (win) {
-                    //Browser has allowed it to be opened
-                    win.focus();
-                } else {
-                    //Browser has blocked it
+                try {
+                    var win = window.open(rs.url, '_blank');
+                    if (win) {
+                        //Browser has allowed it to be opened
+                        win.focus();
+                    } else {
+                        //Browser has blocked it
+                        swal({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Please allow popups for this website!'
+                        });
+                    }
+                } catch (ex) {
                     swal({
                         type: 'error',
-                        title: 'Oops...',
-                        text: 'Please allow popups for this website!'
+                        title: 'Can not open file:',
+                        text: ex
                     });
                 }
+               
             } else {
                 var message = "Something happened. Please try again.";
                 if (rs.message) message = rs.message;
