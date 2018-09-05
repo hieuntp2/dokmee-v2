@@ -14,6 +14,7 @@ using Services.UserSerivce;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -209,8 +210,8 @@ namespace Services.AuthService
 
 			DmsConnectorProperty.RegisterCabinet(new Guid(cabinetId));
 			string url = DmsConnectorProperty.ViewFile(id);
-            string machineName = HttpContext.Current.Request.Url.Host;
-
+            //string machineName = HttpContext.Current.Request.Url.Host;
+            string machineName = GetIPAddress();
             string localhost = "localhost";
 			if (url.Contains(localhost))
 			{
@@ -403,8 +404,42 @@ namespace Services.AuthService
 			return loginResult;
 		}
 
-		#endregion
-	}
+        public string GetIPAddress()
+        {
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName()); // `Dns.Resolve()` method is deprecated.
+
+            foreach(var ip in ipHostInfo.AddressList)
+            {
+                if (ValidateIPv4(ip.ToString()))
+                {
+                    return ip.ToString();
+                }
+            }
+            return string.Empty;
+            //IPAddress ipAddress = ipHostInfo.AddressList[0];
+
+            //return ipAddress.ToString();
+        }
+
+        public bool ValidateIPv4(string ipString)
+        {
+            if (String.IsNullOrWhiteSpace(ipString))
+            {
+                return false;
+            }
+
+            string[] splitValues = ipString.Split('.');
+            if (splitValues.Length != 4)
+            {
+                return false;
+            }
+
+            byte tempForParsing;
+
+            return splitValues.All(r => byte.TryParse(r, out tempForParsing));
+        }
+        #endregion
+    }
 
 	public class InvalideUsernameException : ArgumentException
 	{
