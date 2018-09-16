@@ -302,9 +302,12 @@ namespace Services.AuthService
                 foreach (var noteIdTemp in status)
                 {
                     Guid nodeId = Guid.Empty;
-                    //update status to Complete
-                    var customerStatus = "Complete";
-                    UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+                    if (!string.IsNullOrEmpty(noteIdTemp) && Guid.TryParse(noteIdTemp, out nodeId))
+                    {
+                        //update status to Complete
+                        var customerStatus = "Complete";
+                        UpdateCustomerStatus(cabinetId, customerStatus, nodeId);
+                    }
 
                     //if (!string.IsNullOrEmpty(noteIdTemp) && Guid.TryParse(noteIdTemp, out nodeId))
                     //{

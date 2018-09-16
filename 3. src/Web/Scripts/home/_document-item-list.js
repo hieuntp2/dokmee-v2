@@ -102,7 +102,7 @@ function complete() {
         };
         swal({
             title: 'Are you sure?',
-            text: "Files seleted will be move to another folder and change status to Complete",
+            text: "Files seleted will be changed status to Complete",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -124,11 +124,12 @@ function complete() {
                     success: function (rs) {
                         $(".loading-overlay").hide();
                         if (rs.status) {
-                            for (var i = trIdx.length - 1; i >= 0; i--) {
-                                var rowdelete = trIdx[i];
-                                console.log(rowdelete);
-                                document.getElementById('tblfileSystems').deleteRow(rowdelete);
-                            }
+                            //for (var i = trIdx.length - 1; i >= 0; i--) {
+                            //    var rowdelete = trIdx[i];
+                            //    console.log(rowdelete);
+                            //    document.getElementById('tblfileSystems').deleteRow(rowdelete);
+                            //}
+                            setViewSelectedDocumentStatus("Complete");
                             swal({
                                 text: "Successful"
                             });
