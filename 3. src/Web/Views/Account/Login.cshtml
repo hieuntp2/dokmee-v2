@@ -25,14 +25,15 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Type</label>
+                        <input  name="Type" type="hidden" value="0"/>
+                        @*<label class="col-md-4 control-label">Type</label>
                         <div class="col-md-8">
                             <select name="Type" class="form-control">
                                 <option selected value="0">DMS</option>
                                 <option value="1">WEB</option>
                                 <option value="2">CLOUD</option>
                             </select>
-                        </div>
+                        </div>*@
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.UserName, new { @class = "col-md-4 control-label" })
