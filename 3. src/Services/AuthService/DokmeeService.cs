@@ -284,10 +284,7 @@ namespace Services.AuthService
             {
                 throw new ArgumentException("username is null or empty");
             }
-            if (string.IsNullOrWhiteSpace(tempFolder))
-            {
-                throw new ArgumentException("Temp folder is null or empty");
-            }
+
             UserLogin user = _tempDbService.GetUserLogin(username);
             IEnumerable<DokmeeFilesystem> results = new List<DokmeeFilesystem>();
             Guid cabinetId = Guid.Empty;

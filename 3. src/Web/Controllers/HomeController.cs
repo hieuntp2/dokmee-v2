@@ -235,8 +235,7 @@ namespace Web.Controllers
                 {
                     string cabinetId = _userService.GetCurrentCabinetId();
                     string username = User.Identity.GetUserId();
-                    var tempFolder = _configurationService.TempFolder;
-                    _dokmeeService.Complete(username, args, tempFolder, cabinetId);
+                    _dokmeeService.Complete(username, args, string.Empty, cabinetId);
                 }
                 return Json(new
                 {
